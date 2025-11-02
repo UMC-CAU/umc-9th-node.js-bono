@@ -10,9 +10,9 @@ import {
 } from "../repositories/mission.repository.js";
 
 export const missionSignUp = async (data) => {
-  const joinMissionId = await addMission({});
+  const joinMissionId = await addMission(data);
   if (joinMissionId === null) {
-    throw new Error("이미 존재하는 미션입니다.");
+    throw new Error("존재하지 않는 가게입니다.");
   }
 
   const mission = await getMission(joinMissionId);

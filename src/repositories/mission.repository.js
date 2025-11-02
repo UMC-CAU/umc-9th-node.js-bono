@@ -1,8 +1,57 @@
 import { pool } from "../db.config.js";
 
-export const addMission = async (data) => {};
+export const addMission = async (data) => {
+  const conn = await pool.getConnection(); //연결됐는지 여부
 
-export const getMission = async (missionId) => {};
+  try {
+    const [confirmstore] = await conn.query(
+      //가게 존재하는지 확인
+      "SELECT EXISTS(SELECT 1 FROM store WHERE id=?) as isExistStore;",
+      [data.store_id]
+    );
+
+    if (!confirmstore[0].isExistStore) {
+      return null;
+    }
+
+    const [result] = await pool.query(
+      `INSERT INTO mission (store_id, content, reward, duedate) VALUES (?, ?, ?, ?);`,
+      [data.store_id, data.content, data.reward, data.duedate]
+    );
+
+    return result.insertId;
+  } catch (err) {
+    throw new Error(
+      `오류가 발생했어요. 요청 파라미터를 확인해주세요. (${err})`
+    );
+  } finally {
+    conn.release();
+  }
+};
+
+export const getMission = async (missionId) => {
+  const conn = await pool.getConnection();
+  try {
+    const [mission] = await pool.query(
+      `SELECT * FROM mission JOIN store ON mission.store_id = store.id WHERE mission.id = ?;`,
+      missionId
+    );
+
+    console.log(mission);
+
+    if (mission.length == 0) {
+      return null;
+    }
+
+    return mission[0];
+  } catch (err) {
+    throw new Error(
+      `오류가 발생했어요. 요청 파라미터를 확인해주세요. (${err})`
+    );
+  } finally {
+    conn.release();
+  }
+};
 
 export const setUserMissionInProgress = async (data) => {
   const conn = await pool.getConnection();

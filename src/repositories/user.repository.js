@@ -27,7 +27,7 @@ export const addUser = async (data) => {
       ]
     );
 
-    return result.insertId; //insertID가 어디서난거냐?
+    return result.insertId; //insertID가 어디서난거냐?-> mysql에서 자동으로 생성해주는거임.
   } catch (err) {
     throw new Error(
       `오류가 발생했어요. 요청 파라미터를 확인해주세요. (${err})`
