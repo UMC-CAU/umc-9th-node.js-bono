@@ -1,125 +1,123 @@
-import { pool } from "../db.config.js";
+import { prisma } from "../db.config.js";
 
 export const addMission = async (data) => {
-  const conn = await pool.getConnection(); //연결됐는지 여부
-
   try {
-    const [confirmstore] = await conn.query(
-      //가게 존재하는지 확인
-      "SELECT EXISTS(SELECT 1 FROM store WHERE id=?) as isExistStore;",
-      [data.store_id]
-    );
+    // 가게 존재하는지 확인
+    const existingStore = await prisma.store.findUnique({
+      where: { id: data.store_id },
+    });
 
-    if (!confirmstore[0].isExistStore) {
+    if (!existingStore) {
       return null;
     }
 
-    const [result] = await pool.query(
-      `INSERT INTO mission (store_id, content, reward, duedate) VALUES (?, ?, ?, ?);`,
-      [data.store_id, data.content, data.reward, data.duedate]
-    );
+    const newMission = await prisma.mission.create({
+      data: {
+        store_id: data.store_id,
+        content: data.content,
+        reward: data.reward,
+        duedate: data.duedate,
+      },
+    });
 
-    return result.insertId;
+    return newMission.id;
   } catch (err) {
     throw new Error(
       `오류가 발생했어요. 요청 파라미터를 확인해주세요. (${err})`
     );
-  } finally {
-    conn.release();
   }
 };
 
 export const getMission = async (missionId) => {
-  const conn = await pool.getConnection();
   try {
-    const [mission] = await pool.query(
-      `SELECT * FROM mission JOIN store ON mission.store_id = store.id WHERE mission.id = ?;`,
-      missionId
-    );
+    const mission = await prisma.mission.findUnique({
+      where: { id: missionId },
+      include: {
+        store: true,
+      },
+    });
 
     console.log(mission);
 
-    if (mission.length == 0) {
+    if (!mission) {
       return null;
     }
 
-    return mission[0];
+    // MySQL JOIN 결과와 동일한 형식으로 변환
+    return {
+      ...mission,
+      ...mission.store,
+    };
   } catch (err) {
     throw new Error(
       `오류가 발생했어요. 요청 파라미터를 확인해주세요. (${err})`
     );
-  } finally {
-    conn.release();
   }
 };
 
 export const setUserMissionInProgress = async (data) => {
-  const conn = await pool.getConnection();
   try {
-    const [confirmmission] = await conn.query(
-      //미션존재여부
-      "SELECT id FROM mission WHERE id = ?",
-      [data.mission_id]
-    );
-    if (confirmmission.length === 0) {
+    // 미션 존재여부 확인
+    const mission = await prisma.mission.findUnique({
+      where: { id: data.mission_id },
+    });
+    if (!mission) {
       throw new Error("존재하지 않는 미션입니다.");
     }
 
-    const [confirmuser] = await conn.query(
-      //유저존재여부
-      "SELECT id FROM `user` WHERE id = ?",
-      [data.user_id]
-    );
-    if (confirmuser.length === 0) {
+    // 유저 존재여부 확인
+    const user = await prisma.user.findUnique({
+      where: { id: data.user_id },
+    });
+    if (!user) {
       throw new Error("존재하지 않는 사용자입니다.");
     }
 
-    const [confirminprogress] = await pool.query(
-      //이미 진행중인 미션인지 확인
-      `SELECT EXISTS(SELECT * FROM user_mission WHERE user_id=? AND mission_id=? AND status='IN_PROGRESS') as isInProgress;`,
-      [data.user_id, data.mission_id]
-    );
+    // 이미 진행중인 미션인지 확인
+    const existingUserMission = await prisma.user_mission.findFirst({
+      where: {
+        user_id: data.user_id,
+        mission_id: data.mission_id,
+        status: "IN_PROGRESS",
+      },
+    });
 
-    if (confirminprogress[0].isInProgress) {
+    if (existingUserMission) {
       throw new Error("이미 진행중인 미션입니다.");
     }
 
-    const [result] = await pool.query(
-      `INSERT INTO user_mission(user_id, mission_id, status) VALUES (?, ?, 'IN_PROGRESS')`,
-      [data.user_id, data.mission_id]
-    );
+    const newUserMission = await prisma.user_mission.create({
+      data: {
+        user_id: data.user_id,
+        mission_id: data.mission_id,
+        status: "IN_PROGRESS",
+      },
+    });
 
-    return result.insertId;
+    return newUserMission.id;
   } catch (err) {
     throw new Error(
       `오류가 발생했어요. 요청 파라미터를 확인해주세요. (${err})`
     );
-  } finally {
-    conn.release();
   }
 };
 
 export const getUserMission = async (userMissionId) => {
-  const conn = await pool.getConnection();
-
   try {
-    const [userMission] = await pool.query(
-      `SELECT * FROM user_mission WHERE id = ?;`,
-      userMissionId
-    );
+    const userMission = await prisma.user_mission.findUnique({
+      where: { id: userMissionId },
+    });
 
     console.log(userMission);
 
-    if (userMission.length == 0) {
+    if (!userMission) {
       return null;
     }
 
-    return userMission[0];
+    return userMission;
   } catch (err) {
     throw new Error(
       `오류가 발생했어요. 요청 파라미터를 확인해주세요. (${err})`
     );
-  } finally {
-    conn.release();
   }
 };

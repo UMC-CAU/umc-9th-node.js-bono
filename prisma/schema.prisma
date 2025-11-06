@@ -107,6 +107,6 @@ enum user_mission_status {
 }
 
 enum user_gender {
-  // 남성 @map("남성")
-  // 여성 @map("여성")
+  남성
+  여성
 }

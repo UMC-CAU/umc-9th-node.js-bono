@@ -1,9 +1,11 @@
 export const bodyToMission = (body) => {
+  const duedate = new Date(body.duedate);
+
   return {
     store_id: body.store_id,
     content: body.content,
     reward: body.reward,
-    duedate: body.duedate,
+    duedate: duedate,
   };
 };
 
