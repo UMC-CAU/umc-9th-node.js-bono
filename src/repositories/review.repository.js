@@ -1,51 +1,62 @@
-import { pool } from "../db.config.js";
+import { prisma } from "../db.config.js";
 
 export const addReview = async (data) => {
-  const conn = await pool.getConnection();
+  const isExistStore = await prisma.store.findFirst({
+    where: { id: data.store_id },
+  });
 
-  try {
-    const [confirm] = await pool.query(
-      //store_id 존재하는지 확인
-      `SELECT EXISTS(SELECT 1 FROM store WHERE id=?) as isExistStore;`,
-      [data.store_id]
-    );
-
-    const [result] = await pool.query(
-      `INSERT INTO review(user_id, store_id, content, rate) VALUES (?, ?, ?, ?)`,
-      [data.user_id, data.store_id, data.content, data.rate]
-    );
-
-    return result.insertId;
-  } catch (err) {
-    throw new Error(
-      `오류가 발생했어요. 요청 파라미터를 확인해주세요. (${err})`
-    );
-  } finally {
-    conn.release();
+  if (!isExistStore) {
+    return null;
   }
+
+  const created = await prisma.review.create({
+    data: {
+      user_id: data.user_id,
+      store_id: data.store_id,
+      content: data.content,
+      rate: data.rate,
+    },
+  });
+
+  return created.id;
 };
 
 export const getReview = async (reviewId) => {
-  const conn = await pool.getConnection();
+  //이건 리뷰 하나만 가져오는거
+  const review = await prisma.review.findFirst({
+    where: { id: reviewId },
+  });
 
-  try {
-    const [review] = await pool.query(
-      `SELECT * FROM review JOIN store ON review.store_id = store.id WHERE review.id = ?;`,
-      reviewId
-    );
+  return review;
+};
 
-    console.log(review);
+export const getAllStoreReviews = async (storeId, cursor = 0) => {
+  const reviews = await prisma.review.findMany({
+    select: {
+      id: true,
+      content: true,
+      store_id: true,
+      user_id: true,
+      created_at: true,
+      rate: true,
+      store: {
+        select: {
+          name: true,
+        },
+      },
+      user: {
+        select: {
+          name: true,
+        },
+      },
+    },
+    where: {
+      store_id: storeId,
+      id: { gt: cursor },
+    },
+    orderBy: { id: "asc" },
+    take: 5,
+  });
 
-    if (review.length == 0) {
-      return null;
-    }
-
-    return review[0];
-  } catch (err) {
-    throw new Error(
-      `오류가 발생했어요. 요청 파라미터를 확인해주세요. (${err})`
-    );
-  } finally {
-    conn.release();
-  }
+  return reviews;
 };

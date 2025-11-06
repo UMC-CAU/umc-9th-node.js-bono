@@ -15,7 +15,7 @@ export const addUser = async (data) => {
     }
 
     const [result] = await pool.query(
-      `INSERT INTO user (email, name, gender, birth, address, detail_address, phone_number, password) VALUES (?, ?, ?, ?, ?, ?, ?, ?);`,
+      `INSERT INTO user (email, name, gender, birth, address, detail_address, phone_number) VALUES (?, ?, ?, ?, ?, ?, ?);`,
       [
         data.email,
         data.name,
@@ -24,7 +24,6 @@ export const addUser = async (data) => {
         data.address,
         data.detailAddress,
         data.phoneNumber,
-        data.password,
       ]
     );
 

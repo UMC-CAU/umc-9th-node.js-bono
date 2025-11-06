@@ -3,7 +3,10 @@ import express from "express";
 import cors from "cors";
 import { handleUserSignUp } from "./controllers/user.controller.js";
 import { handleStoreSignUp } from "./controllers/store.controller.js";
-import { handleReviewSignUp } from "./controllers/review.controller.js";
+import {
+  handleReviewSignUp,
+  handleListStoreReviews,
+} from "./controllers/review.controller.js";
 import {
   handleMissionSignUp,
   handleMissionInProgress,
@@ -28,6 +31,7 @@ app.post("/api/v1/store/signup", handleStoreSignUp);
 app.post("/api/v1/review/signup", handleReviewSignUp);
 app.post("/api/v1/store/mission/signup", handleMissionSignUp);
 app.post("/api/v1/store/mission/inprogress", handleMissionInProgress);
+app.get("/api/v1/stores/:storeId/reviews", handleListStoreReviews);
 
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`);

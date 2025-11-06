@@ -9,7 +9,6 @@ export const bodyToUser = (body) => {
     address: body.address || "", //선택
     detailAddress: body.detailAddress || "", //선택
     phoneNumber: body.phoneNumber, //필수
-    password: body.password, //필수 - 비밀번호 추가
     preferences: body.preferences, // 필수
   };
 };
