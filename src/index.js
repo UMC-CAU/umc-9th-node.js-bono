@@ -13,6 +13,7 @@ import {
   handleUserMissionUpdateInProgress,
   handleListStoreMissions,
   handleListMyMissionsInProgress,
+  handleUserMissionUpdateCompleted,
 } from "./controllers/mission.controller.js";
 
 dotenv.config();
@@ -34,6 +35,11 @@ app.post("/api/v1/store/signup", handleStoreSignUp);
 app.post("/api/v1/review/signup", handleReviewSignUp);
 app.post("/api/v1/store/mission/signup", handleMissionSignUp);
 app.post("/api/v1/store/mission/inprogress", handleUserMissionUpdateInProgress);
+app.patch(
+  "/api/v1/users/mission/:user_mission_id/completed", //아이디를 바디로 넣는 게 낫나 params로 넣는 게 낫나?? 일단은 params로..
+  handleUserMissionUpdateCompleted
+);
+
 app.get("/api/v1/stores/:storeId/reviews", handleListStoreReviews);
 app.get("/api/v1/users/:userId/reviews", handleListMyReviews);
 app.get("/api/v1/stores/:storeId/missions", handleListStoreMissions);

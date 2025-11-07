@@ -102,6 +102,47 @@ export const setUserMissionInProgress = async (data) => {
   }
 };
 
+export const setUserMissionCompleted = async (userMissionId) => {
+  try {
+    // 유저미션 존재여부 확인
+    const userMission = await prisma.user_mission.findUnique({
+      where: {
+        id: userMissionId,
+      },
+    });
+    if (!userMission) {
+      throw new Error("존재하지 않는 유저미션입니다.");
+    }
+
+    // 이미 완료된 미션인지 확인
+    const completedUserMission = await prisma.user_mission.findFirst({
+      where: {
+        id: userMissionId,
+        status: "COMPLETED",
+      },
+    });
+
+    if (completedUserMission) {
+      throw new Error("이미 완료된 미션입니다.");
+    }
+
+    const newUserMission = await prisma.user_mission.update({
+      where: {
+        id: userMission.id,
+      },
+      data: {
+        status: "COMPLETED",
+      },
+    });
+
+    return newUserMission.id;
+  } catch (err) {
+    throw new Error(
+      `오류가 발생했어요. 요청 파라미터를 확인해주세요. (${err})`
+    );
+  }
+};
+
 export const getUserMission = async (userMissionId) => {
   try {
     const userMission = await prisma.user_mission.findUnique({

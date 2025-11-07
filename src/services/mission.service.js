@@ -8,6 +8,7 @@ import {
   addMission,
   getMission,
   setUserMissionInProgress,
+  setUserMissionCompleted,
   getUserMission,
   getStoreMissions,
   getMyUserMissionsInProgress,
@@ -32,6 +33,15 @@ export const missionInProgress = async (data) => {
 
   const userMission = await getUserMission(userMissionId);
 
+  return responseFromUserMission(userMission);
+};
+
+export const missionComplete = async (user_mission_id) => {
+  const userMissionId = await setUserMissionCompleted(user_mission_id);
+  if (userMissionId === null) {
+    throw new Error("미션 완료에 실패했습니다.");
+  }
+  const userMission = await getUserMission(userMissionId);
   return responseFromUserMission(userMission);
 };
 

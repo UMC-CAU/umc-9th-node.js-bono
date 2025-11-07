@@ -19,6 +19,7 @@ export const responseFromMission = (mission) => {
   };
 };
 export const bodyToUserMission = (body) => {
+  // 없는걸 생성하면 id가 없고, 있는걸 조회할땐 id가 있다. -> 없는거 생성할때만 dto 쓰고 있는 거 조회할때는 그냥 생으로 usermission_id 쓰면 안되나?
   return {
     user_id: body.user_id,
     mission_id: body.mission_id,

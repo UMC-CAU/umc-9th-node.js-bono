@@ -3,6 +3,7 @@ import { bodyToMission, bodyToUserMission } from "../dtos/mission.dto.js";
 import {
   missionSignUp,
   missionInProgress,
+  missionComplete,
   listStoreMissions,
   listMyMissionsInProgress,
 } from "../services/mission.service.js";
@@ -22,7 +23,16 @@ export const handleUserMissionUpdateInProgress = async (req, res, next) => {
   const mission = await missionInProgress(bodyToUserMission(req.body));
   res.status(StatusCodes.OK).json({ result: mission });
 };
+export const handleUserMissionUpdateCompleted = async (req, res, next) => {
+  console.log("미션 완료 요청을 받았습니다!");
+  console.log("params:", req.params);
 
+  const mission = await missionComplete(
+    //dto 안 씀.
+    parseInt(req.params.user_mission_id) //user_mission_id할까 그냥 id 할까?
+  );
+  res.status(StatusCodes.OK).json({ result: mission });
+};
 export const handleListStoreMissions = async (req, res, next) => {
   console.log("가게 미션 목록 조회를 요청했습니다!");
   console.log("params:", req.params);
