@@ -60,3 +60,34 @@ export const getAllStoreReviews = async (storeId, cursor = 0) => {
 
   return reviews;
 };
+
+export const getAllUserReviews = async (userId, cursor = 0) => {
+  const reviews = await prisma.review.findMany({
+    select: {
+      id: true,
+      content: true,
+      store_id: true,
+      user_id: true,
+      created_at: true,
+      rate: true,
+      store: {
+        select: {
+          name: true,
+        },
+      },
+      user: {
+        select: {
+          name: true,
+        },
+      },
+    },
+    where: {
+      user_id: userId,
+      id: { gt: cursor },
+    },
+    orderBy: { id: "asc" },
+    take: 5,
+  });
+
+  return reviews;
+};

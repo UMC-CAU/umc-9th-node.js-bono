@@ -6,6 +6,7 @@ import { handleStoreSignUp } from "./controllers/store.controller.js";
 import {
   handleReviewSignUp,
   handleListStoreReviews,
+  handleListMyReviews,
 } from "./controllers/review.controller.js";
 import {
   handleMissionSignUp,
@@ -32,6 +33,7 @@ app.post("/api/v1/review/signup", handleReviewSignUp);
 app.post("/api/v1/store/mission/signup", handleMissionSignUp);
 app.post("/api/v1/store/mission/inprogress", handleMissionInProgress);
 app.get("/api/v1/stores/:storeId/reviews", handleListStoreReviews);
+app.get("/api/v1/users/:userId/reviews", handleListMyReviews);
 
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`);

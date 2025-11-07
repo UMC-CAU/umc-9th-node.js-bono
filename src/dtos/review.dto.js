@@ -19,6 +19,7 @@ export const responseFromReview = (review) => {
 };
 
 export const responseFromReviews = (reviews) => {
+  //가게의 리뷰 보기, 나의 리뷰 보기 - 두 곳에서 응답 반환 객체로 사용된다.
   return {
     data: reviews,
     pagination: {
