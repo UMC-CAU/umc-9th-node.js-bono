@@ -30,7 +30,7 @@ export const getReview = async (reviewId) => {
   return review;
 };
 
-export const getAllStoreReviews = async (storeId, cursor = 0) => {
+export const getStoreReviews = async (storeId, cursor = 0) => {
   const reviews = await prisma.review.findMany({
     select: {
       id: true,
@@ -61,7 +61,7 @@ export const getAllStoreReviews = async (storeId, cursor = 0) => {
   return reviews;
 };
 
-export const getAllUserReviews = async (userId, cursor = 0) => {
+export const getUserReviews = async (userId, cursor = 0) => {
   const reviews = await prisma.review.findMany({
     select: {
       id: true,
