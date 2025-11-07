@@ -2,6 +2,7 @@ import {
   responseFromMission,
   responseFromUserMission,
   responseFromMissions,
+  responseFromUserMissions,
 } from "../dtos/mission.dto.js";
 import {
   addMission,
@@ -9,6 +10,7 @@ import {
   setUserMissionInProgress,
   getUserMission,
   getStoreMissions,
+  getMyUserMissionsInProgress,
 } from "../repositories/mission.repository.js";
 
 export const missionSignUp = async (data) => {
@@ -36,4 +38,9 @@ export const missionInProgress = async (data) => {
 export const listStoreMissions = async (storeId, cursor = 0) => {
   const missions = await getStoreMissions(storeId, cursor);
   return responseFromMissions(missions);
+};
+
+export const listMyMissionsInProgress = async (userId, cursor = 0) => {
+  const missions = await getMyUserMissionsInProgress(userId, cursor);
+  return responseFromUserMissions(missions);
 };

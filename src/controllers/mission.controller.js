@@ -4,6 +4,7 @@ import {
   missionSignUp,
   missionInProgress,
   listStoreMissions,
+  listMyMissionsInProgress,
 } from "../services/mission.service.js";
 
 export const handleMissionSignUp = async (req, res, next) => {
@@ -14,7 +15,7 @@ export const handleMissionSignUp = async (req, res, next) => {
   res.status(StatusCodes.OK).json({ result: mission });
 };
 
-export const handleMissionInProgress = async (req, res, next) => {
+export const handleUserMissionUpdateInProgress = async (req, res, next) => {
   console.log("미션 진행 요청을 받았습니다!");
   console.log("body:", req.body);
 
@@ -28,6 +29,17 @@ export const handleListStoreMissions = async (req, res, next) => {
   console.log("query:", req.query);
   const missions = await listStoreMissions(
     parseInt(req.params.storeId),
+    typeof req.query.cursor === "string" ? parseInt(req.query.cursor) : 0
+  );
+  res.status(StatusCodes.OK).json(missions);
+};
+
+export const handleListMyMissionsInProgress = async (req, res, next) => {
+  console.log("나의 진행중인 미션 목록 조회를 요청했습니다!");
+  console.log("params:", req.params);
+  console.log("query:", req.query);
+  const missions = await listMyMissionsInProgress(
+    parseInt(req.params.userId),
     typeof req.query.cursor === "string" ? parseInt(req.query.cursor) : 0
   );
   res.status(StatusCodes.OK).json(missions);

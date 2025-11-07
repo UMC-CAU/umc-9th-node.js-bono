@@ -10,8 +10,9 @@ import {
 } from "./controllers/review.controller.js";
 import {
   handleMissionSignUp,
-  handleMissionInProgress,
+  handleUserMissionUpdateInProgress,
   handleListStoreMissions,
+  handleListMyMissionsInProgress,
 } from "./controllers/mission.controller.js";
 
 dotenv.config();
@@ -32,10 +33,11 @@ app.post("/api/v1/users/signup", handleUserSignUp);
 app.post("/api/v1/store/signup", handleStoreSignUp);
 app.post("/api/v1/review/signup", handleReviewSignUp);
 app.post("/api/v1/store/mission/signup", handleMissionSignUp);
-app.post("/api/v1/store/mission/inprogress", handleMissionInProgress);
+app.post("/api/v1/store/mission/inprogress", handleUserMissionUpdateInProgress);
 app.get("/api/v1/stores/:storeId/reviews", handleListStoreReviews);
 app.get("/api/v1/users/:userId/reviews", handleListMyReviews);
 app.get("/api/v1/stores/:storeId/missions", handleListStoreMissions);
+app.get("/api/v1/users/:userId/missions", handleListMyMissionsInProgress);
 
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`);
