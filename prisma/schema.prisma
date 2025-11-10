@@ -17,6 +17,10 @@ model User {
   address             String?             @db.VarChar(255)
   detailAddress       String?             @map("detail_address") @db.VarChar(255)
   phoneNumber         String?             @map("phone_number") @db.VarChar(20)
+  
+  nickname            String?             @db.VarChar(50)
+  //새 필드 추가  
+
   review              review[]
   userFavorCategories UserFavorCategory[]
   user_mission        user_mission[]
