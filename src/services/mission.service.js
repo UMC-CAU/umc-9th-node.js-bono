@@ -18,6 +18,7 @@ import {
   UserNotFoundError,
   StoreNotFoundError,
   UserMissionInProgressError,
+  UserMissionNotFoundError,
 } from "../errors.js";
 
 export const missionSignUp = async (data) => {
@@ -68,20 +69,37 @@ export const missionInProgress = async (data) => {
 };
 
 export const missionComplete = async (user_mission_id) => {
-  const userMissionId = await setUserMissionCompleted(user_mission_id);
-  if (userMissionId === null) {
-    throw new Error("미션 완료에 실패했습니다.");
+  try {
+    const userMissionId = await setUserMissionCompleted(user_mission_id);
+    if (userMissionId === null) {
+      //이럴경우가없는데?
+      throw new Error("미션 완료에 실패했습니다.");
+    }
+    const userMission = await getUserMission(userMissionId);
+    return responseFromUserMission(userMission);
+  } catch (err) {
+    if (err.message === "존재하지 않는 유저미션입니다.") {
+      throw new UserMissionNotFoundError("존재하지 않는 유저미션입니다.");
+    }
+    if (err.message === "이미 완료된 미션입니다.") {
+      throw new UserMissionInProgressError("이미 완료된 미션입니다.");
+    }
+    throw err; //다른 에러는 그대로 던지기
   }
-  const userMission = await getUserMission(userMissionId);
-  return responseFromUserMission(userMission);
 };
 
 export const listStoreMissions = async (storeId, cursor = 0) => {
   const missions = await getStoreMissions(storeId, cursor);
+  if (missions === null) {
+    throw new StoreNotFoundError("존재하지 않는 가게입니다.", storeId);
+  }
   return responseFromMissions(missions);
 };
 
 export const listMyMissionsInProgress = async (userId, cursor = 0) => {
   const missions = await getMyUserMissionsInProgress(userId, cursor);
+  if (missions === null) {
+    throw new UserNotFoundError("존재하지 않는 사용자입니다.", userId);
+  }
   return responseFromUserMissions(missions);
 };

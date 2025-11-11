@@ -1,9 +1,4 @@
 import { prisma } from "../db.config.js";
-import {
-  MissionNotFoundError,
-  UserNotFoundError,
-  StoreNotFoundError,
-} from "../errors.js";
 
 export const addMission = async (data) => {
   try {
@@ -87,7 +82,7 @@ export const setUserMissionInProgress = async (data) => {
     });
 
     if (existingUserMission) {
-      throw new Error("이미 진행중인 미션입니다."); //이건 어떻게 처리하지?
+      throw new Error("이미 진행중인 미션입니다.", data);
     }
 
     const newUserMission = await prisma.user_mission.create({
@@ -168,6 +163,15 @@ export const getUserMission = async (userMissionId) => {
 };
 
 export const getStoreMissions = async (storeId, cursor = 0) => {
+  // 가게 존재하는지 확인
+  const existingStore = await prisma.store.findUnique({
+    where: { id: storeId },
+  });
+
+  if (!existingStore) {
+    return null; // 존재하지 않는 가게일 때
+  }
+
   const missions = await prisma.mission.findMany({
     select: {
       id: true,
@@ -193,6 +197,15 @@ export const getStoreMissions = async (storeId, cursor = 0) => {
 };
 
 export const getMyUserMissionsInProgress = async (userId, cursor = 0) => {
+  // 유저 존재하는지 확인
+  const existingUser = await prisma.user.findUnique({
+    where: { id: userId },
+  });
+
+  if (!existingUser) {
+    return null; // 존재하지 않는 유저일 때
+  }
+
   const missions = await prisma.user_mission.findMany({
     select: {
       id: true,

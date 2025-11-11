@@ -47,3 +47,13 @@ export class UserMissionInProgressError extends Error {
     this.data = data;
   }
 }
+
+export class UserMissionNotFoundError extends Error {
+  errorCode = "UM002";
+
+  constructor(reason, data) {
+    super(reason);
+    this.reason = reason;
+    this.data = data;
+  }
+}
