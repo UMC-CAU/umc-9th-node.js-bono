@@ -95,6 +95,15 @@ export const setUserMissionInProgress = async (data) => {
 
     return newUserMission.id;
   } catch (err) {
+    if (err.message === "존재하지 않는 미션입니다.") {
+      throw err; //그대로 던지기
+    }
+    if (err.message === "존재하지 않는 사용자입니다.") {
+      throw err; //그대로 던지기
+    }
+    if (err.message === "이미 진행중인 미션입니다.") {
+      throw err; //그대로 던지기
+    }
     throw new Error(
       `오류가 발생했어요. 요청 파라미터를 확인해주세요. (${err})`
     );
@@ -136,7 +145,13 @@ export const setUserMissionCompleted = async (userMissionId) => {
 
     return newUserMission.id;
   } catch (err) {
-    throw new Error(
+    if (err.message === "존재하지 않는 유저미션입니다.") {
+      throw err; //그대로 던지기
+    }
+    if (err.message === "이미 완료된 미션입니다.") {
+      throw err; //그대로 던지기
+    }
+    throw new Error( // 나머지 에러일 때만 이거 실행됨.
       `오류가 발생했어요. 요청 파라미터를 확인해주세요. (${err})`
     );
   }
@@ -197,15 +212,6 @@ export const getStoreMissions = async (storeId, cursor = 0) => {
 };
 
 export const getMyUserMissionsInProgress = async (userId, cursor = 0) => {
-  // 유저 존재하는지 확인
-  const existingUser = await prisma.user.findUnique({
-    where: { id: userId },
-  });
-
-  if (!existingUser) {
-    return null; // 존재하지 않는 유저일 때
-  }
-
   const missions = await prisma.user_mission.findMany({
     select: {
       id: true,

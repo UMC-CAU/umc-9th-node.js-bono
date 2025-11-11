@@ -11,7 +11,7 @@ export const addStore = async (data) => {
     });
 
     if (existingStore) {
-      throw new Error("동일한 지역에 같은 이름의 가게가 이미 존재합니다.");
+      return null; //DuplicateStoreError 로 잡음
     }
 
     const newStore = await prisma.store.create({

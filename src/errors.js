@@ -8,6 +8,16 @@ export class DuplicateUserEmailError extends Error {
   }
 }
 
+export class UserNotFoundError extends Error {
+  errorCode = "U002";
+
+  constructor(reason, data) {
+    super(reason);
+    this.reason = reason;
+    this.data = data;
+  }
+}
+
 export class StoreNotFoundError extends Error {
   errorCode = "S001";
 
@@ -17,9 +27,8 @@ export class StoreNotFoundError extends Error {
     this.data = data;
   }
 }
-
-export class UserNotFoundError extends Error {
-  errorCode = "U002";
+export class DuplicateStoreError extends Error {
+  errorCode = "S002";
 
   constructor(reason, data) {
     super(reason);
@@ -38,8 +47,8 @@ export class MissionNotFoundError extends Error {
   }
 }
 
-export class UserMissionInProgressError extends Error {
-  errorCode = "UM001";
+export class ReviewNotFoundError extends Error {
+  errorCode = "R001";
 
   constructor(reason, data) {
     super(reason);
@@ -50,6 +59,26 @@ export class UserMissionInProgressError extends Error {
 
 export class UserMissionNotFoundError extends Error {
   errorCode = "UM002";
+
+  constructor(reason, data) {
+    super(reason);
+    this.reason = reason;
+    this.data = data;
+  }
+}
+
+export class AlreadyInProgressError extends Error {
+  errorCode = "UM003";
+
+  constructor(reason, data) {
+    super(reason);
+    this.reason = reason;
+    this.data = data;
+  }
+}
+
+export class AlreadyCompletedError extends Error {
+  errorCode = "UM004";
 
   constructor(reason, data) {
     super(reason);

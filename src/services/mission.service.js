@@ -17,8 +17,9 @@ import {
   MissionNotFoundError,
   UserNotFoundError,
   StoreNotFoundError,
-  UserMissionInProgressError,
   UserMissionNotFoundError,
+  AlreadyInProgressError,
+  AlreadyCompletedError,
 } from "../errors.js";
 
 export const missionSignUp = async (data) => {
@@ -62,7 +63,7 @@ export const missionInProgress = async (data) => {
       throw new UserNotFoundError("존재하지 않는 사용자입니다.", data);
     }
     if (err.message === "이미 진행중인 미션입니다.") {
-      throw new UserMissionInProgressError("이미 진행중인 미션입니다.", data);
+      throw new AlreadyInProgressError("이미 진행중인 미션입니다.", data);
     }
     throw err; //다른 에러는 그대로 던지기
   }
@@ -79,10 +80,16 @@ export const missionComplete = async (user_mission_id) => {
     return responseFromUserMission(userMission);
   } catch (err) {
     if (err.message === "존재하지 않는 유저미션입니다.") {
-      throw new UserMissionNotFoundError("존재하지 않는 유저미션입니다.");
+      throw new UserMissionNotFoundError(
+        "존재하지 않는 유저미션입니다.",
+        user_mission_id
+      );
     }
     if (err.message === "이미 완료된 미션입니다.") {
-      throw new UserMissionInProgressError("이미 완료된 미션입니다.");
+      throw new AlreadyCompletedError(
+        "이미 완료된 미션입니다.",
+        user_mission_id //여기서 userMission 쓰면 안되나? 네 안되네요
+      );
     }
     throw err; //다른 에러는 그대로 던지기
   }

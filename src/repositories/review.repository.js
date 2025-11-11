@@ -6,7 +6,7 @@ export const addReview = async (data) => {
   });
 
   if (!isExistStore) {
-    return null;
+    return null; //->StoreNotFoundError
   }
 
   const created = await prisma.review.create({
@@ -31,6 +31,13 @@ export const getReview = async (reviewId) => {
 };
 
 export const getStoreReviews = async (storeId, cursor = 0) => {
+  const isExistStore = await prisma.store.findFirst({
+    where: { id: storeId },
+  });
+
+  if (!isExistStore) {
+    return null; //->StoreNotFoundError
+  }
   const reviews = await prisma.review.findMany({
     select: {
       id: true,
@@ -58,10 +65,18 @@ export const getStoreReviews = async (storeId, cursor = 0) => {
     take: 5,
   });
 
-  return reviews;
+  return reviews; //return []인건 null이 아니다!
 };
 
 export const getUserReviews = async (userId, cursor = 0) => {
+  const isExistUser = await prisma.user.findUnique({
+    where: { id: userId },
+  });
+
+  if (!isExistUser) {
+    return null; //->UserNotFoundError
+  }
+
   const reviews = await prisma.review.findMany({
     select: {
       id: true,
