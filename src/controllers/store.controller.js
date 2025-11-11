@@ -7,5 +7,5 @@ export const handleStoreSignUp = async (req, res, next) => {
   console.log("body:", req.body); // 값이 잘 들어오나 확인하기 위한 테스트용
 
   const store = await storeSignUp(bodyToStore(req.body));
-  res.status(StatusCodes.OK).json({ result: store });
+  res.status(StatusCodes.OK).success(store);
 };

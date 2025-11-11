@@ -6,7 +6,7 @@ import {
   getUserPreferencesByUserId,
   setPreference,
 } from "../repositories/user.repository.js";
-import { DuplicateUserEmailError } from "../utils/errors.js";
+import { DuplicateUserEmailError } from "../errors.js";
 
 export const userSignUp = async (data) => {
   // 비밀번호 해싱 (salt rounds = 10)

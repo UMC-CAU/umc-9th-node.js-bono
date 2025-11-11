@@ -13,7 +13,7 @@ export const handleMissionSignUp = async (req, res, next) => {
   console.log("body:", req.body);
 
   const mission = await missionSignUp(bodyToMission(req.body));
-  res.status(StatusCodes.OK).json({ result: mission });
+  res.status(StatusCodes.OK).success(mission);
 };
 
 export const handleUserMissionUpdateInProgress = async (req, res, next) => {
@@ -21,7 +21,7 @@ export const handleUserMissionUpdateInProgress = async (req, res, next) => {
   console.log("body:", req.body);
 
   const mission = await missionInProgress(bodyToUserMission(req.body));
-  res.status(StatusCodes.OK).json({ result: mission });
+  res.status(StatusCodes.OK).success(mission);
 };
 export const handleUserMissionUpdateCompleted = async (req, res, next) => {
   console.log("미션 완료 요청을 받았습니다!");
@@ -31,7 +31,7 @@ export const handleUserMissionUpdateCompleted = async (req, res, next) => {
     //dto 안 씀.
     parseInt(req.params.user_mission_id) //user_mission_id할까 그냥 id 할까?
   );
-  res.status(StatusCodes.OK).json({ result: mission });
+  res.status(StatusCodes.OK).success(mission);
 };
 export const handleListStoreMissions = async (req, res, next) => {
   console.log("가게 미션 목록 조회를 요청했습니다!");
@@ -41,7 +41,7 @@ export const handleListStoreMissions = async (req, res, next) => {
     parseInt(req.params.storeId),
     typeof req.query.cursor === "string" ? parseInt(req.query.cursor) : 0
   );
-  res.status(StatusCodes.OK).json(missions);
+  res.status(StatusCodes.OK).success(missions);
 };
 
 export const handleListMyMissionsInProgress = async (req, res, next) => {
@@ -52,5 +52,5 @@ export const handleListMyMissionsInProgress = async (req, res, next) => {
     parseInt(req.params.userId),
     typeof req.query.cursor === "string" ? parseInt(req.query.cursor) : 0
   );
-  res.status(StatusCodes.OK).json(missions);
+  res.status(StatusCodes.OK).success(missions);
 };

@@ -7,7 +7,7 @@ export const bodyToStore = (body) => {
 
 export const responseFromStore = (store) => {
   return {
-    name: store.name,
+    store_name: store.name,
     region_name: store.region_name,
   };
 };
