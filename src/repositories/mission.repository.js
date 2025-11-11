@@ -1,4 +1,9 @@
 import { prisma } from "../db.config.js";
+import {
+  MissionNotFoundError,
+  UserNotFoundError,
+  StoreNotFoundError,
+} from "../errors.js";
 
 export const addMission = async (data) => {
   try {
@@ -43,7 +48,6 @@ export const getMission = async (missionId) => {
       return null;
     }
 
-    // MySQL JOIN 결과와 동일한 형식으로 변환
     return {
       ...mission,
       ...mission.store,
@@ -62,7 +66,7 @@ export const setUserMissionInProgress = async (data) => {
       where: { id: data.mission_id },
     });
     if (!mission) {
-      throw new Error("존재하지 않는 미션입니다.");
+      throw new Error("존재하지 않는 미션입니다.", data);
     }
 
     // 유저 존재여부 확인
@@ -70,7 +74,7 @@ export const setUserMissionInProgress = async (data) => {
       where: { id: data.user_id },
     });
     if (!user) {
-      throw new Error("존재하지 않는 사용자입니다.");
+      throw new Error("존재하지 않는 사용자입니다.", data);
     }
 
     // 이미 진행중인 미션인지 확인
@@ -83,7 +87,7 @@ export const setUserMissionInProgress = async (data) => {
     });
 
     if (existingUserMission) {
-      throw new Error("이미 진행중인 미션입니다.");
+      throw new Error("이미 진행중인 미션입니다."); //이건 어떻게 처리하지?
     }
 
     const newUserMission = await prisma.user_mission.create({

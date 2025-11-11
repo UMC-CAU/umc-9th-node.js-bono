@@ -9,7 +9,7 @@ export const addUser = async (data) => {
     });
 
     if (existingUser) {
-      return null;
+      return null; //이제 service에서 joinUserId에서 null을 반환한걸로 인식하고 DuplicateUserEmailError 던짐. 근데 이게 null이 나오는 경우가 중복일때뿐인가?
     }
 
     // 새 사용자 생성

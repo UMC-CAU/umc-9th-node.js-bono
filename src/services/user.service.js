@@ -26,6 +26,8 @@ export const userSignUp = async (data) => {
 
   if (joinUserId === null) {
     throw new DuplicateUserEmailError("이미 존재하는 이메일입니다.", data);
+    //왜 service에서 했지 repository에서 안 하고?
+    // -> Service 계층에서 비즈니스 로직 검증을 하는 것이 맞는 설계입니다! repository는 단순히 데이터 접근만 담당하니까요.
   }
 
   for (const preference of data.preferences) {
