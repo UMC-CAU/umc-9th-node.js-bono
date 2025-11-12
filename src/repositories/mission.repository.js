@@ -212,6 +212,14 @@ export const getStoreMissions = async (storeId, cursor = 0) => {
 };
 
 export const getMyUserMissionsInProgress = async (userId, cursor = 0) => {
+  const isExistUser = await prisma.user.findUnique({
+    where: { id: userId },
+  });
+
+  if (!isExistUser) {
+    return null; //->UserNotFoundError
+  }
+
   const missions = await prisma.user_mission.findMany({
     select: {
       id: true,
