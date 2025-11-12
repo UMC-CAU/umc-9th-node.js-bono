@@ -1,3 +1,14 @@
+export class LoginError extends Error {
+  // 로그인이 필요합니다.
+  errorCode = "U000";
+
+  constructor(reason, data) {
+    super(reason);
+    this.reason = reason;
+    this.data = data;
+  }
+}
+
 export class DuplicateUserEmailError extends Error {
   errorCode = "U001";
 
