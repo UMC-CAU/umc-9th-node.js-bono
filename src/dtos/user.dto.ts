@@ -1,4 +1,27 @@
-export const bodyToUser = (body) => {
+interface UserSignUpRequest {
+  email: string;
+  name: string;
+  gender: string;
+  birth: Date;
+  address: string;
+  detailAddress: string;
+  phoneNumber: string;
+  password: string;
+  preferences: number[];
+}
+
+interface UserSignUpResponse {
+  email: string;
+  name: string;
+  gender: string;
+  birth: Date;
+  address: string;
+  detailAddress: string;
+  phoneNumber: string;
+  preferences: string[];
+}
+
+export const bodyToUser = (body: any): UserSignUpRequest => {
   const birth = new Date(body.birth); //날짜 변환
 
   return {
@@ -14,8 +37,13 @@ export const bodyToUser = (body) => {
   };
 };
 
-export const responseFromUser = ({ user, preferences }) => {
-  const mappedPreferences = preferences.map((preference) => preference.name);
+export const responseFromUser = ({
+  user,
+  preferences,
+}: any): UserSignUpResponse => {
+  const mappedPreferences = preferences.map(
+    (preference: any) => preference.name
+  );
   return {
     email: user.email,
     name: user.name,
