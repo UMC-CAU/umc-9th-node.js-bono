@@ -1,27 +1,10 @@
-interface UserSignUpRequest {
-  email: string;
-  name: string;
-  gender: string;
-  birth: Date;
-  address: string;
-  detailAddress: string;
-  phoneNumber: string;
-  password: string;
-  preferences: number[];
-}
+import {
+  UserSignUpData,
+  UserResponse,
+  ResponseFromUserInput,
+} from "../types/user.types.js";
 
-interface UserSignUpResponse {
-  email: string;
-  name: string;
-  gender: string;
-  birth: Date;
-  address: string;
-  detailAddress: string;
-  phoneNumber: string;
-  preferences: string[];
-}
-
-export const bodyToUser = (body: any): UserSignUpRequest => {
+export const bodyToUser = (body: any): UserSignUpData => {
   const birth = new Date(body.birth); //날짜 변환
 
   return {
@@ -40,7 +23,7 @@ export const bodyToUser = (body: any): UserSignUpRequest => {
 export const responseFromUser = ({
   user,
   preferences,
-}: any): UserSignUpResponse => {
+}: ResponseFromUserInput): UserResponse => {
   const mappedPreferences = preferences.map(
     (preference: any) => preference.name
   );
@@ -49,9 +32,9 @@ export const responseFromUser = ({
     name: user.name,
     gender: user.gender,
     birth: user.birth,
-    address: user.address || "",
-    detailAddress: user.detailAddress || "",
-    phoneNumber: user.phoneNumber,
+    address: user.address || "", // ← null 처리
+    detailAddress: user.detailAddress || "", // ← null 처리
+    phoneNumber: user.phoneNumber || "", // ← null 처리
     preferences: mappedPreferences, //배열을 이름으로 수정해야 함. 매핑 이용하자.
   };
 };

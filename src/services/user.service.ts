@@ -1,3 +1,5 @@
+import { UserSignUpData, CreateUserData } from "../types/user.types.js";
+
 import bcrypt from "bcrypt";
 import { responseFromUser } from "../dtos/user.dto.js";
 import {
@@ -8,7 +10,7 @@ import {
 } from "../repositories/user.repository.js";
 import { DuplicateUserEmailError } from "../errors.js";
 
-export const userSignUp = async (data) => {
+export const userSignUp = async (data: UserSignUpData) => {
   // 비밀번호 해싱 (salt rounds = 10)
   const hashedPassword = await bcrypt.hash(data.password, 10);
 
@@ -36,6 +38,11 @@ export const userSignUp = async (data) => {
   }
 
   const user = await getUser(joinUserId);
+  // 방금 생성한 사용자가 없을 수 없으므로 null 체크
+  if (user === null) {
+    throw new Error("사용자 생성 후 조회에 실패했습니다.");
+  }
+
   const preferences = await getUserPreferencesByUserId(joinUserId);
 
   return responseFromUser({ user, preferences });

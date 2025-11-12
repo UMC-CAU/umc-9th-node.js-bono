@@ -1,108 +1,92 @@
 import { prisma } from "../db.config.js";
+import { UserPreference, CreateUserData } from "../types/user.types.js";
 
 // User 데이터 삽입 (Prisma)
-export const addUser = async (data) => {
-  try {
-    // 이메일 중복 확인
-    const existingUser = await prisma.user.findUnique({
-      where: { email: data.email },
-    });
+export const addUser = async (data: CreateUserData): Promise<number | null> => {
+  // 이메일 중복 확인
+  const existingUser = await prisma.user.findUnique({
+    where: { email: data.email },
+  });
 
-    if (existingUser) {
-      return null; //이제 service에서 joinUserId에서 null을 반환한걸로 인식하고 DuplicateUserEmailError 던짐. 근데 이게 null이 나오는 경우가 중복일때뿐인가?
-    }
-
-    // 새 사용자 생성
-    const newUser = await prisma.user.create({
-      data: {
-        email: data.email,
-        name: data.name,
-        gender: data.gender,
-        birth: data.birth,
-        address: data.address,
-        detailAddress: data.detailAddress,
-        phoneNumber: data.phoneNumber,
-        password: data.password,
-      },
-    });
-
-    return newUser.id;
-  } catch (err) {
-    throw new Error(
-      `오류가 발생했어요. 요청 파라미터를 확인해주세요. (${err})`
-    );
+  if (existingUser) {
+    return null; //이제 service에서 joinUserId에서 null을 반환한걸로 인식하고 DuplicateUserEmailError 던짐. 근데 이게 null이 나오는 경우가 중복일때뿐인가?
   }
+
+  // 새 사용자 생성
+  const newUser = await prisma.user.create({
+    data: {
+      email: data.email,
+      name: data.name,
+      gender: data.gender,
+      birth: data.birth,
+      address: data.address,
+      detailAddress: data.detailAddress,
+      phoneNumber: data.phoneNumber,
+      password: data.password,
+    },
+  });
+
+  return newUser.id;
 };
 
 // 사용자 정보 얻기 (Prisma)
-export const getUser = async (userId) => {
-  try {
-    const user = await prisma.user.findUnique({
-      where: { id: userId },
-    });
+export const getUser = async (userId: number) => {
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+  });
 
-    console.log(user);
+  console.log(user);
 
-    if (!user) {
-      return null;
-    }
-
-    return user;
-  } catch (err) {
-    throw new Error(
-      `오류가 발생했어요. 요청 파라미터를 확인해주세요. (${err})`
-    );
+  if (!user) {
+    return null;
   }
+
+  return user;
 };
 
 // 음식 선호 카테고리 매핑 (Prisma)
-export const setPreference = async (userId, foodCategoryId) => {
-  try {
-    await prisma.userFavorCategory.create({
-      data: {
-        userId: userId,
-        foodCategoryId: foodCategoryId,
-      },
-    });
+export const setPreference = async (
+  userId: number,
+  foodCategoryId: number
+): Promise<void> => {
+  await prisma.userFavorCategory.create({
+    data: {
+      userId: userId,
+      foodCategoryId: foodCategoryId,
+    },
+  });
 
-    return;
-  } catch (err) {
-    throw new Error(
-      `오류가 발생했어요. 요청 파라미터를 확인해주세요. (${err})`
-    );
-  }
+  return;
 };
 
 // 사용자 선호 카테고리 반환 (Prisma)
-export const getUserPreferencesByUserId = async (userId) => {
-  try {
-    const preferences = await prisma.userFavorCategory.findMany({
-      where: { userId: userId },
-      select: {
-        id: true,
-        foodCategoryId: true,
-        userId: true,
-        foodCategory: {
-          select: {
-            name: true,
-          },
+export const getUserPreferencesByUserId = async (
+  userId: number
+): Promise<UserPreference[]> => {
+  const preferences = await prisma.userFavorCategory.findMany({
+    where: { userId: userId },
+    select: {
+      id: true,
+      foodCategoryId: true,
+      userId: true,
+      foodCategory: {
+        select: {
+          name: true,
         },
       },
-      orderBy: {
-        foodCategoryId: "asc",
-      },
-    });
+    },
+    orderBy: {
+      foodCategoryId: "asc",
+    },
+  });
 
-    // MySQL 결과와 동일한 형식으로 변환
-    return preferences.map((pref) => ({
+  // null 체크 후 매핑
+  return preferences
+    .filter((pref) => pref.foodCategory !== null) // foodCategory가 null인 경우 제외
+    .map((pref) => ({
       id: pref.id,
       food_category_id: pref.foodCategoryId,
       user_id: pref.userId,
-      name: pref.foodCategory.name,
+      name: pref.foodCategory!.name, // ! 로 null이 아님을 단언 (위에서 이미 필터링함)
     }));
-  } catch (err) {
-    throw new Error(
-      `오류가 발생했어요. 요청 파라미터를 확인해주세요. (${err})`
-    );
-  }
 };
