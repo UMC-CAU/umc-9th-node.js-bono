@@ -1,4 +1,5 @@
 import {
+  MissionData,
   MissionSignUpRequest,
   MissionSignUpResponse,
   MissionsResponse,
@@ -46,7 +47,7 @@ export const responseFromUserMission = (mission: any): UserMissionResponse => {
 };
 
 export const responseFromMissions = (
-  missions: MissionSignUpResponse[]
+  missions: MissionData[]
 ): MissionsResponse => {
   return {
     data: missions,
