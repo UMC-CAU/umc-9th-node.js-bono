@@ -51,9 +51,9 @@ model UserFavorCategory {
 model mission {
   id           Int            @id @default(autoincrement())
   store_id     Int
-  content      String?        @db.Text
-  reward       Int?
-  duedate      DateTime?      @db.DateTime(0)
+  content      String        @db.Text
+  reward       Int
+  duedate      DateTime      @db.DateTime(0)
   store        store          @relation(fields: [store_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "mission_ibfk_1")
   user_mission user_mission[]
 

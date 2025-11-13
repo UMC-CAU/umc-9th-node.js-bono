@@ -109,3 +109,66 @@ export interface ReviewsData {
     cursor: number | null;
   };
 }
+
+// -------------------mission---------------------
+export interface MissionSignUpRequest {
+  //dto의 bodyToMission의 반환타입
+  store_id: number;
+  content: string;
+  reward: number;
+  duedate: Date;
+}
+
+export interface MissionSignUpResponse {
+  //dto의 responseFromMission의 반환타입
+  id: number;
+  store_name: string;
+  content: string;
+  reward: number;
+  duedate: Date;
+}
+
+export interface UserMissionRequest {
+  //dto의 bodyToUserMission의 반환타입
+  user_id: number;
+  mission_id: number;
+  status: string;
+}
+
+export interface UserMissionResponse {
+  //dto의 responseFromUserMission의 반환타입
+  id: number;
+  user_id: number;
+  mission_id: number;
+  status: string;
+}
+
+export interface MissionsResponse {
+  //dto의 responseFromMissions의 반환타입
+  data: MissionData[];
+  pagination: {
+    cursor: number | null;
+  };
+}
+
+export interface UserMissionsResponse {
+  //dto의 responseFromUserMissions의 반환타입
+  data: UserMissionResponse[];
+  pagination: {
+    cursor: number | null;
+  };
+}
+
+export interface MissionData {
+  //repository계층의 getMission 함수에서 반환하는 타입
+  store: {
+    id: number;
+    name: string;
+    region_id: number;
+  };
+  id: number;
+  store_id: number;
+  content: string | null;
+  reward: number | null;
+  duedate: Date | null;
+}

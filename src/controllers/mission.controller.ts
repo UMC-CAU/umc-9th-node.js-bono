@@ -8,7 +8,7 @@ import {
   listMyMissionsInProgress,
 } from "../services/mission.service.js";
 
-export const handleMissionSignUp = async (req, res, next) => {
+export const handleMissionSignUp = async (req: any, res: any, next: any) => {
   console.log("미션 추가를 요청했습니다!");
   console.log("body:", req.body);
 
@@ -16,14 +16,22 @@ export const handleMissionSignUp = async (req, res, next) => {
   res.status(StatusCodes.OK).success(mission);
 };
 
-export const handleUserMissionUpdateInProgress = async (req, res, next) => {
+export const handleUserMissionUpdateInProgress = async (
+  req: any,
+  res: any,
+  next: any
+) => {
   console.log("미션 진행 요청을 받았습니다!");
   console.log("body:", req.body);
 
   const mission = await missionInProgress(bodyToUserMission(req.body));
   res.status(StatusCodes.OK).success(mission);
 };
-export const handleUserMissionUpdateCompleted = async (req, res, next) => {
+export const handleUserMissionUpdateCompleted = async (
+  req: any,
+  res: any,
+  next: any
+) => {
   console.log("미션 완료 요청을 받았습니다!");
   console.log("params:", req.params);
 
@@ -33,7 +41,11 @@ export const handleUserMissionUpdateCompleted = async (req, res, next) => {
   );
   res.status(StatusCodes.OK).success(mission);
 };
-export const handleListStoreMissions = async (req, res, next) => {
+export const handleListStoreMissions = async (
+  req: any,
+  res: any,
+  next: any
+) => {
   console.log("가게 미션 목록 조회를 요청했습니다!");
   console.log("params:", req.params);
   console.log("query:", req.query);
@@ -44,7 +56,11 @@ export const handleListStoreMissions = async (req, res, next) => {
   res.status(StatusCodes.OK).success(missions);
 };
 
-export const handleListMyMissionsInProgress = async (req, res, next) => {
+export const handleListMyMissionsInProgress = async (
+  req: any,
+  res: any,
+  next: any
+) => {
   console.log("나의 진행중인 미션 목록 조회를 요청했습니다!");
   console.log("params:", req.params);
   console.log("query:", req.query);

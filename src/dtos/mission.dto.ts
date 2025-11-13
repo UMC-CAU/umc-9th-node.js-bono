@@ -1,44 +1,12 @@
-interface MissionSignUpRequest {
-  store_id: number;
-  content: string;
-  reward: number;
-  duedate: Date;
-}
+import {
+  MissionSignUpRequest,
+  MissionSignUpResponse,
+  MissionsResponse,
+  UserMissionRequest,
+  UserMissionResponse,
+  UserMissionsResponse,
+} from "../types/types";
 
-interface MissionSignUpResponse {
-  id: number;
-  store_name: string;
-  content: string;
-  reward: number;
-  duedate: Date;
-}
-
-interface UserMissionRequest {
-  user_id: number;
-  mission_id: number;
-  status: string;
-}
-
-interface UserMissionResponse {
-  id: number;
-  user_id: number;
-  mission_id: number;
-  status: string;
-}
-
-interface MissionsResponse {
-  data: MissionSignUpResponse[];
-  pagination: {
-    cursor: number | null;
-  };
-}
-
-interface UserMissionsResponse {
-  data: UserMissionResponse[];
-  pagination: {
-    cursor: number | null;
-  };
-}
 export const bodyToMission = (body: any): MissionSignUpRequest => {
   const duedate = new Date(body.duedate);
 
@@ -77,7 +45,9 @@ export const responseFromUserMission = (mission: any): UserMissionResponse => {
   };
 };
 
-export const responseFromMissions = (missions: any[]): MissionsResponse => {
+export const responseFromMissions = (
+  missions: MissionSignUpResponse[]
+): MissionsResponse => {
   return {
     data: missions,
     pagination: {
@@ -87,7 +57,7 @@ export const responseFromMissions = (missions: any[]): MissionsResponse => {
 };
 
 export const responseFromUserMissions = (
-  missions: any[]
+  missions: UserMissionResponse[]
 ): UserMissionsResponse => {
   return {
     data: missions,

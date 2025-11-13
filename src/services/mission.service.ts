@@ -21,8 +21,13 @@ import {
   AlreadyInProgressError,
   AlreadyCompletedError,
 } from "../errors.js";
+import {
+  MissionSignUpRequest,
+  MissionData,
+  UserMissionRequest,
+} from "../types/types";
 
-export const missionSignUp = async (data) => {
+export const missionSignUp = async (data: MissionSignUpRequest) => {
   const joinMissionId = await addMission(data);
   if (joinMissionId === null) {
     throw new StoreNotFoundError("존재하지 않는 가게입니다.", data);
@@ -32,7 +37,7 @@ export const missionSignUp = async (data) => {
   return responseFromMission(mission);
 };
 
-export const missionInProgress = async (data) => {
+export const missionInProgress = async (data: UserMissionRequest) => {
   try {
     const userMissionId = await setUserMissionInProgress(data);
     /*
@@ -56,20 +61,22 @@ export const missionInProgress = async (data) => {
 
     return responseFromUserMission(userMission);
   } catch (err) {
-    if (err.message === "존재하지 않는 미션입니다.") {
-      throw new MissionNotFoundError("존재하지 않는 미션입니다.", data);
-    }
-    if (err.message === "존재하지 않는 사용자입니다.") {
-      throw new UserNotFoundError("존재하지 않는 사용자입니다.", data);
-    }
-    if (err.message === "이미 진행중인 미션입니다.") {
-      throw new AlreadyInProgressError("이미 진행중인 미션입니다.", data);
+    if (err instanceof Error) {
+      if (err.message === "존재하지 않는 미션입니다.") {
+        throw new MissionNotFoundError("존재하지 않는 미션입니다.", data);
+      }
+      if (err.message === "존재하지 않는 사용자입니다.") {
+        throw new UserNotFoundError("존재하지 않는 사용자입니다.", data);
+      }
+      if (err.message === "이미 진행중인 미션입니다.") {
+        throw new AlreadyInProgressError("이미 진행중인 미션입니다.", data);
+      }
     }
     throw err; //다른 에러는 그대로 던지기
   }
 };
 
-export const missionComplete = async (user_mission_id) => {
+export const missionComplete = async (user_mission_id: number) => {
   try {
     const userMissionId = await setUserMissionCompleted(user_mission_id);
     if (userMissionId === null) {
@@ -79,23 +86,25 @@ export const missionComplete = async (user_mission_id) => {
     const userMission = await getUserMission(userMissionId);
     return responseFromUserMission(userMission);
   } catch (err) {
-    if (err.message === "존재하지 않는 유저미션입니다.") {
-      throw new UserMissionNotFoundError(
-        "존재하지 않는 유저미션입니다.",
-        user_mission_id
-      );
-    }
-    if (err.message === "이미 완료된 미션입니다.") {
-      throw new AlreadyCompletedError(
-        "이미 완료된 미션입니다.",
-        user_mission_id //여기서 userMission 쓰면 안되나? 네 안되네요
-      );
+    if (err instanceof Error) {
+      if (err.message === "존재하지 않는 유저미션입니다.") {
+        throw new UserMissionNotFoundError(
+          "존재하지 않는 유저미션입니다.",
+          user_mission_id
+        );
+      }
+      if (err.message === "이미 완료된 미션입니다.") {
+        throw new AlreadyCompletedError(
+          "이미 완료된 미션입니다.",
+          user_mission_id //여기서 userMission 쓰면 안되나? 네 안되네요
+        );
+      }
     }
     throw err; //다른 에러는 그대로 던지기
   }
 };
 
-export const listStoreMissions = async (storeId, cursor = 0) => {
+export const listStoreMissions = async (storeId: number, cursor = 0) => {
   const missions = await getStoreMissions(storeId, cursor);
   if (missions === null) {
     throw new StoreNotFoundError("존재하지 않는 가게입니다.", storeId);
@@ -103,7 +112,7 @@ export const listStoreMissions = async (storeId, cursor = 0) => {
   return responseFromMissions(missions);
 };
 
-export const listMyMissionsInProgress = async (userId, cursor = 0) => {
+export const listMyMissionsInProgress = async (userId: number, cursor = 0) => {
   const missions = await getMyUserMissionsInProgress(userId, cursor);
   if (missions === null) {
     throw new UserNotFoundError("존재하지 않는 사용자입니다.", userId);
