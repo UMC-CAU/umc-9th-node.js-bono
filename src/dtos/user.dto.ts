@@ -2,7 +2,7 @@ import {
   UserSignUpData,
   UserResponse,
   ResponseFromUserInput,
-} from "../types/user.types.js";
+} from "../types/types.js";
 
 export const bodyToUser = (body: any): UserSignUpData => {
   const birth = new Date(body.birth); //날짜 변환

@@ -1,4 +1,4 @@
-import { StoreSignUpRequest, StoreSignUpResponse } from "../types/user.types";
+import { StoreSignUpRequest, StoreSignUpResponse } from "../types/types";
 
 export const bodyToStore = (body: any): StoreSignUpRequest => {
   return {

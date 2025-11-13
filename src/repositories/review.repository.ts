@@ -1,6 +1,7 @@
 import { prisma } from "../db.config.js";
+import { ReviewData, ReviewsData } from "../types/types";
 
-export const addReview = async (data) => {
+export const addReview = async (data: any): Promise<number | null> => {
   const isExistStore = await prisma.store.findFirst({
     where: { id: data.store_id },
   });
@@ -21,16 +22,39 @@ export const addReview = async (data) => {
   return created.id;
 };
 
-export const getReview = async (reviewId) => {
+export const getReview = async (
+  reviewId: number
+): Promise<ReviewData | null> => {
   //이건 리뷰 하나만 가져오는거
   const review = await prisma.review.findFirst({
     where: { id: reviewId },
+    select: {
+      id: true,
+      content: true,
+      store_id: true,
+      user_id: true,
+      created_at: true,
+      rate: true,
+      store: {
+        select: {
+          name: true,
+        },
+      },
+      user: {
+        select: {
+          name: true,
+        },
+      },
+    },
   });
 
   return review;
 };
 
-export const getStoreReviews = async (storeId, cursor = 0) => {
+export const getStoreReviews = async (
+  storeId: number,
+  cursor = 0
+): Promise<null | ReviewData[]> => {
   const isExistStore = await prisma.store.findFirst({
     where: { id: storeId },
   });
@@ -68,7 +92,10 @@ export const getStoreReviews = async (storeId, cursor = 0) => {
   return reviews; //return []인건 null이 아니다!
 };
 
-export const getUserReviews = async (userId, cursor = 0) => {
+export const getUserReviews = async (
+  userId: number,
+  cursor = 0
+): Promise<null | ReviewData[]> => {
   const isExistUser = await prisma.user.findUnique({
     where: { id: userId },
   });

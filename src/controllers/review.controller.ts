@@ -6,7 +6,7 @@ import {
   listMyReviews,
 } from "../services/review.service.js";
 
-export const handleReviewSignUp = async (req, res, next) => {
+export const handleReviewSignUp = async (req: any, res: any, next: any) => {
   console.log("리뷰 추가를 요청했습니다!");
   console.log("body:", req.body);
 
@@ -14,7 +14,7 @@ export const handleReviewSignUp = async (req, res, next) => {
   res.status(StatusCodes.OK).success(review);
 };
 
-export const handleListStoreReviews = async (req, res, next) => {
+export const handleListStoreReviews = async (req: any, res: any, next: any) => {
   console.log("가게 리뷰 목록 조회를 요청했습니다!");
   console.log("params:", req.params);
   console.log("query:", req.query);
@@ -25,7 +25,7 @@ export const handleListStoreReviews = async (req, res, next) => {
   res.status(StatusCodes.OK).success(reviews);
 };
 
-export const handleListMyReviews = async (req, res, next) => {
+export const handleListMyReviews = async (req: any, res: any, next: any) => {
   console.log("나의 리뷰 목록 조회를 요청했습니다!");
   const reviews = await listMyReviews(
     parseInt(req.params.userId),

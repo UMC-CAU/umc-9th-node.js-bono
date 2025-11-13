@@ -1,24 +1,4 @@
-interface ReviewSignUpRequest {
-  user_id: number;
-  store_id: number;
-  content: string;
-  rate: number;
-}
-
-interface ReviewSignUpResponse {
-  user_id: number;
-  store_name: string;
-  content: string;
-  created_at: Date;
-  rate: number;
-}
-
-interface ReviewsResponse {
-  data: ReviewSignUpResponse[];
-  pagination: {
-    cursor: number | null;
-  };
-}
+import { ReviewSignUpRequest, ReviewData, ReviewsData } from "../types/types";
 
 export const bodyToReview = (body: any): ReviewSignUpRequest => {
   return {
@@ -29,21 +9,22 @@ export const bodyToReview = (body: any): ReviewSignUpRequest => {
   };
 };
 
-export const responseFromReview = (review: any): ReviewSignUpResponse => {
-  console.log("response:", review);
+export const responseFromReview = (review: ReviewData) => {
   return {
+    id: review.id,
     user_id: review.user_id,
-    store_name: review.name,
+    store_id: review.store_id,
     content: review.content,
     created_at: review.created_at,
     rate: review.rate,
+    store_name: review.store?.name, // ← 평면으로 변환
+    user_name: review.user?.name, // ← 평면으로 변환
   };
 };
 
-export const responseFromReviews = (reviews: any[]): ReviewsResponse => {
-  //가게의 리뷰 보기, 나의 리뷰 보기 - 두 곳에서 응답 반환 객체로 사용된다.
+export const responseFromReviews = (reviews: ReviewData[]): ReviewsData => {
   return {
-    data: reviews,
+    data: reviews, // 변환 없이 그대로 반환
     pagination: {
       cursor: reviews.length ? reviews[reviews.length - 1].id : null,
     },

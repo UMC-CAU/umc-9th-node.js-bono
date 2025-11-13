@@ -80,3 +80,32 @@ export interface StoreData {
   region_id: number;
   region_name: string;
 }
+
+// -------------------review---------------------
+export interface ReviewSignUpRequest {
+  //reviewSignUp에서 요청하는 타입
+  user_id: number;
+  store_id: number;
+  content: string;
+  rate: number;
+}
+
+export interface ReviewData {
+  //repository계층의 getReview 등의 함수에서 반환하는 타입.
+  id: number;
+  user_id: number;
+  store_id: number;
+  content: string | null;
+  created_at: Date | null;
+  rate: number | null;
+  store: { name: string } | null;
+  user: { name: string } | null;
+}
+
+export interface ReviewsData {
+  //listStoreReviews, listMyReviews 반환하는 타입
+  data: ReviewData[];
+  pagination: {
+    cursor: number | null;
+  };
+}

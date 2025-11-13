@@ -1,5 +1,5 @@
 import { prisma } from "../db.config.js";
-import { StoreData } from "../types/user.types.js";
+import { StoreData } from "../types/types.js";
 
 export const addStore = async (data: any): Promise<number | null> => {
   // 동일한 지역에 같은 이름의 가게가 있는지 확인

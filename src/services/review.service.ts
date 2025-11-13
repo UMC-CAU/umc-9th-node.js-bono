@@ -12,7 +12,7 @@ import {
   ReviewNotFoundError,
 } from "../errors.js";
 
-export const reviewSignUp = async (data) => {
+export const reviewSignUp = async (data: any) => {
   const joinReviewId = await addReview({
     user_id: data.user_id,
     store_id: data.store_id,
@@ -24,10 +24,17 @@ export const reviewSignUp = async (data) => {
     throw new StoreNotFoundError("존재하지 않는 가게입니다.", data);
   }
   const review = await getReview(joinReviewId);
+
+  if (review === null) {
+    throw new ReviewNotFoundError(
+      "리뷰 생성 후 조회에 실패했습니다.",
+      joinReviewId
+    );
+  } //null일 경우를 여기서 걸러줘야 👇🏼 에서 에러 안 남.
   return responseFromReview(review);
 };
 
-export const listStoreReviews = async (storeId, cursor = 0) => {
+export const listStoreReviews = async (storeId: number, cursor = 0) => {
   const reviews = await getStoreReviews(storeId, cursor);
 
   if (reviews === null) {
@@ -36,7 +43,7 @@ export const listStoreReviews = async (storeId, cursor = 0) => {
   return responseFromReviews(reviews);
 };
 
-export const listMyReviews = async (userId, cursor = 0) => {
+export const listMyReviews = async (userId: number, cursor = 0) => {
   // 스토어 상관 없이 내가 쓴 모든 리뷰
   const reviews = await getUserReviews(userId, cursor);
   if (reviews === null) {

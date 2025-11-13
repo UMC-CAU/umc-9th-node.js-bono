@@ -1,5 +1,5 @@
 import { prisma } from "../db.config.js";
-import { UserPreference, CreateUserData } from "../types/user.types.js";
+import { UserPreference, CreateUserData } from "../types/types.js";
 
 // User 데이터 삽입 (Prisma)
 export const addUser = async (data: CreateUserData): Promise<number | null> => {
