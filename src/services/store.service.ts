@@ -2,7 +2,7 @@ import { responseFromStore } from "../dtos/store.dto.js";
 import { addStore, getStore } from "../repositories/store.repository.js";
 import { DuplicateStoreError } from "../errors.js";
 
-export const storeSignUp = async (data) => {
+export const storeSignUp = async (data: any) => {
   const joinStoreId = await addStore({
     name: data.name,
     region_id: data.region_id,

@@ -1,12 +1,4 @@
-interface StoreSignUpRequest {
-  name: string;
-  region_id: number;
-}
-
-interface StoreSignUpResponse {
-  store_name: string;
-  region_name: string;
-}
+import { StoreSignUpRequest, StoreSignUpResponse } from "../types/user.types";
 
 export const bodyToStore = (body: any): StoreSignUpRequest => {
   return {

@@ -1,60 +1,49 @@
 import { prisma } from "../db.config.js";
+import { StoreData } from "../types/user.types.js";
 
-export const addStore = async (data) => {
-  try {
-    // 동일한 지역에 같은 이름의 가게가 있는지 확인
-    const existingStore = await prisma.store.findFirst({
-      where: {
-        region_id: data.region_id,
-        name: data.name,
-      },
-    });
+export const addStore = async (data: any): Promise<number | null> => {
+  // 동일한 지역에 같은 이름의 가게가 있는지 확인
+  const existingStore = await prisma.store.findFirst({
+    where: {
+      region_id: data.region_id,
+      name: data.name,
+    },
+  });
 
-    if (existingStore) {
-      return null; //DuplicateStoreError 로 잡음
-    }
-
-    const newStore = await prisma.store.create({
-      data: {
-        name: data.name,
-        region_id: data.region_id,
-      },
-    });
-
-    return newStore.id;
-  } catch (err) {
-    throw new Error(
-      `오류가 발생했어요. 요청 파라미터를 확인해주세요. (${err})`
-    );
+  if (existingStore) {
+    return null; //DuplicateStoreError 로 잡음
   }
+
+  const newStore = await prisma.store.create({
+    data: {
+      name: data.name,
+      region_id: data.region_id,
+    },
+  });
+
+  return newStore.id;
 };
 
-export const getStore = async (storeId) => {
-  try {
-    const store = await prisma.store.findUnique({
-      where: { id: storeId },
-      include: {
-        region: {
-          select: {
-            name: true,
-          },
+export const getStore = async (storeId: number): Promise<StoreData | null> => {
+  const store = await prisma.store.findUnique({
+    where: { id: storeId },
+    include: {
+      region: {
+        select: {
+          name: true,
         },
       },
-    });
+    },
+  });
 
-    console.log(store);
+  console.log(store);
 
-    if (!store) {
-      return null;
-    }
-
-    return {
-      ...store,
-      region_name: store.region.name,
-    };
-  } catch (err) {
-    throw new Error(
-      `오류가 발생했어요. 요청 파라미터를 확인해주세요. (${err})`
-    );
+  if (!store) {
+    return null;
   }
+
+  return {
+    ...store,
+    region_name: store.region.name,
+  };
 };

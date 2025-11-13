@@ -1,4 +1,4 @@
-import { UserSignUpData, CreateUserData } from "../types/user.types.js";
+import { UserSignUpData } from "../types/user.types.js";
 
 import bcrypt from "bcrypt";
 import { responseFromUser } from "../dtos/user.dto.js";

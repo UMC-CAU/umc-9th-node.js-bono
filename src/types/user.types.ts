@@ -1,5 +1,6 @@
 import { user_gender } from "@prisma/client";
 
+// -------------------user---------------------
 // 회원가입 전체 데이터
 export interface UserSignUpData {
   email: string;
@@ -58,4 +59,24 @@ export interface ResponseFromUserInput {
     phoneNumber: string | null; // ← null 허용
   };
   preferences: UserPreference[];
+}
+
+// -------------------store---------------------
+export interface StoreSignUpRequest {
+  //storeSignUp에서 요청하는 타입
+  name: string;
+  region_id: number;
+}
+
+export interface StoreSignUpResponse {
+  //storeSignUp에서 반환하는 타입
+  store_name: string;
+  region_name: string;
+}
+export interface StoreData {
+  //getStore에서 반환하는 타입
+  id: number;
+  name: string;
+  region_id: number;
+  region_name: string;
 }
