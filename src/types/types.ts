@@ -133,6 +133,7 @@ export interface UserMissionRequest {
   user_id: number;
   mission_id: number;
   status: string;
+  updated_at?: Date;
 }
 
 export interface UserMissionResponse {
@@ -141,8 +142,25 @@ export interface UserMissionResponse {
   user_id: number;
   mission_id: number;
   status: string;
+  updated_at?: Date;
 }
 
+export interface UserMissionWithMissionData {
+  //getMyUserMissionsInProgress에서 반환하는 타입
+  id: number;
+  user_id: number;
+  mission_id: number;
+  status: string | null;
+  updated_at: Date | null;
+  mission: {
+    content: string;
+    reward: number;
+    duedate: Date;
+    store: {
+      name: string;
+    };
+  };
+}
 export interface MissionsResponse {
   //dto의 responseFromMissions의 반환타입
   data: MissionData[];
@@ -153,7 +171,7 @@ export interface MissionsResponse {
 
 export interface UserMissionsResponse {
   //dto의 responseFromUserMissions의 반환타입
-  data: UserMissionResponse[];
+  data: UserMissionWithMissionData[];
   pagination: {
     cursor: number | null;
   };

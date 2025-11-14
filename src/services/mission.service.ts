@@ -113,9 +113,9 @@ export const listStoreMissions = async (storeId: number, cursor = 0) => {
 };
 
 export const listMyMissionsInProgress = async (userId: number, cursor = 0) => {
-  const missions = await getMyUserMissionsInProgress(userId, cursor);
-  if (missions === null) {
+  const usermissions = await getMyUserMissionsInProgress(userId, cursor);
+  if (usermissions === null) {
     throw new UserNotFoundError("존재하지 않는 사용자입니다.", userId);
   }
-  return responseFromUserMissions(missions);
+  return responseFromUserMissions(usermissions);
 };

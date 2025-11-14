@@ -221,7 +221,7 @@ export const getMyUserMissionsInProgress = async (
     return null; //->UserNotFoundError
   }
 
-  const missions = await prisma.user_mission.findMany({
+  const userMissions = await prisma.user_mission.findMany({
     select: {
       id: true,
       user_id: true,
@@ -250,5 +250,5 @@ export const getMyUserMissionsInProgress = async (
     take: 5,
   });
 
-  return missions;
+  return userMissions;
 };

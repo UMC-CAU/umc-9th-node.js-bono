@@ -6,6 +6,7 @@ import {
   UserMissionRequest,
   UserMissionResponse,
   UserMissionsResponse,
+  UserMissionWithMissionData,
 } from "../types/types";
 
 export const bodyToMission = (body: any): MissionSignUpRequest => {
@@ -58,7 +59,7 @@ export const responseFromMissions = (
 };
 
 export const responseFromUserMissions = (
-  missions: UserMissionResponse[]
+  missions: UserMissionWithMissionData[]
 ): UserMissionsResponse => {
   return {
     data: missions,
