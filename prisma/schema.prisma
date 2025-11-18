@@ -1,0 +1,116 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                  Int                 @id @default(autoincrement())
+  email               String              @unique(map: "email") @db.VarChar(255)
+  name                String              @db.VarChar(100)
+  password            String?             @db.VarChar(255)
+  gender              user_gender
+  birth               DateTime            @db.Date
+  address             String?             @db.VarChar(255)
+  detailAddress       String?             @map("detail_address") @db.VarChar(255)
+  phoneNumber         String?             @map("phone_number") @db.VarChar(20)
+  
+  nickname            String?             @db.VarChar(50)
+  //새 필드 추가  
+
+  review              review[]
+  userFavorCategories UserFavorCategory[]
+  user_mission        user_mission[]
+
+  @@map("user")
+}
+
+model FoodCategory {
+  id                  Int                 @id @default(autoincrement())
+  name                String              @db.VarChar(50)
+  userFavorCategories UserFavorCategory[]
+
+  @@map("food_category")
+}
+
+model UserFavorCategory {
+  id             Int           @id @default(autoincrement())
+  userId         Int?          @map("user_id")
+  foodCategoryId Int?          @map("food_category_id")
+  user           User?         @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "user_favor_category_ibfk_1")
+  foodCategory   FoodCategory? @relation(fields: [foodCategoryId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "user_favor_category_ibfk_2")
+
+  @@index([userId], map: "user_id")
+  @@index([foodCategoryId], map: "food_category_id")
+  @@map("user_favor_category")
+}
+
+model mission {
+  id           Int            @id @default(autoincrement())
+  store_id     Int
+  content      String        @db.Text
+  reward       Int
+  duedate      DateTime      @db.DateTime(0)
+  store        store          @relation(fields: [store_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "mission_ibfk_1")
+  user_mission user_mission[]
+
+  @@index([store_id], map: "store_id")
+}
+
+model region {
+  id    Int     @id @default(autoincrement())
+  name  String  @db.VarChar(10)
+  store store[]
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model review {
+  id         Int       @id @default(autoincrement())
+  user_id    Int
+  store_id   Int
+  content    String?   @db.Text
+  created_at DateTime? @default(now()) @db.DateTime(6)
+  rate       Int
+  user       User      @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "review_ibfk_1")
+  store      store     @relation(fields: [store_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "review_ibfk_2")
+
+  @@index([store_id], map: "store_id")
+  @@index([user_id], map: "user_id")
+}
+
+model store {
+  id        Int       @id @default(autoincrement())
+  name      String    @unique(map: "name") @db.VarChar(20)
+  region_id Int
+  mission   mission[]
+  review    review[]
+  region    region    @relation(fields: [region_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "store_ibfk_1")
+
+  @@index([region_id], map: "region_id")
+}
+
+model user_mission {
+  id         Int                  @id @default(autoincrement())
+  mission_id Int
+  user_id    Int
+  status     user_mission_status?
+  updated_at DateTime?            @db.DateTime(0)
+  mission    mission              @relation(fields: [mission_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "user_mission_ibfk_1")
+  user       User                 @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "user_mission_ibfk_2")
+
+  @@unique([mission_id, user_id], map: "uq_user_mission")
+  @@index([user_id], map: "user_id")
+}
+
+enum user_mission_status {
+  IN_PROGRESS
+  COMPLETED
+}
+
+enum user_gender {
+  남성
+  여성
+}
