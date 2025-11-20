@@ -5,3 +5,6 @@ node_modules/
 .env
 .env.*
 /src/generated/prisma
+
+# js dist folder
+/dist
