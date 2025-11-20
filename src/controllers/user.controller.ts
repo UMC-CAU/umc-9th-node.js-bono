@@ -12,15 +12,15 @@ export const handleUserSignUp = async (req: any, res: any, next: any) => {
           schema: {
             type: "object",
             properties: {
-              email: { type: "string" },
-              name: { type: "string" },
-              gender: { type: "string" },
-              birth: { type: "string", format: "date" },
-              address: { type: "string" },
-              detailAddress: { type: "string" },
-              phoneNumber: { type: "string" },
-              password: { type: "string" },
-              preferences: { type: "array", items: { type: "number" } }
+              email: { type: "string", example: "user@example.com" },
+              name: { type: "string", example: "홍길동" },
+              gender: { type: "string", example: "여성" },
+              birth: { type: "string", format: "date", example: "2000-01-01" },
+              address: { type: "string", example: "서울시 동작구" },
+              detailAddress: { type: "string", example: "상도동 123-45" },
+              phoneNumber: { type: "string", example: "010-1234-5678" },
+              password: { type: "string", example: "password123" },
+              preferences: { type: "array", items: { type: "number" } , example: [1, 2, 3] }
             }
           }
         }
@@ -38,15 +38,14 @@ export const handleUserSignUp = async (req: any, res: any, next: any) => {
               success: {
                 type: "object",
                 properties: {
-                  email: { type: "string" },
-                  name: { type: "string" },
-                  gender: { type: "string" },
-                  birth: { type: "string", format: "date" },
-                  address: { type: "string" },
-                  detailAddress: { type: "string" },
-                  phoneNumber: { type: "string" },
-                  password: { type: "string" },
-                  preferences: { type: "array", items: { type: "number" } }
+                  name: { type: "string", example: "홍길동" },
+                  gender: { type: "string", example: "여성" },
+                  birth: { type: "string", format: "date", example: "2000-01-01" },
+                  address: { type: "string", example: "서울시 동작구" },
+                  detailAddress: { type: "string", example: "상도동 123-45" },
+                  phoneNumber: { type: "string", example: "010-1234-5678" },
+                  password: { type: "string", example: "password123" },
+                  preferences: { type: "array", items: { type: "number" }, example: [1, 2, 3] }
                 }
               }
             }

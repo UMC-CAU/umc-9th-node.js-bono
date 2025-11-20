@@ -36,7 +36,7 @@ export interface UserResponse {
   address: string;
   detailAddress: string;
   phoneNumber: string;
-  preferences: string[];
+  preferences: string[]; // 카테고리를 이름으로 반환함. 한식 중식 양식..
 }
 
 // 사용자 선호 카테고리
