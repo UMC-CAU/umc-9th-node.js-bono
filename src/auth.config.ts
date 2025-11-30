@@ -56,7 +56,7 @@ const googleVerify = async (profile: any) => {
     //없는 이메일이면 아래와 같은 디폴트값으로 생성함
     data: {
       email,
-      name: profile.display.Name,
+      name: profile.displayName, //오류 나서 고침
       gender: user_gender.여성,
       birth: new Date(1970, 0, 1),
       address: "추후 수정",

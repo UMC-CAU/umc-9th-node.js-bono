@@ -4,8 +4,10 @@ import cors from "cors";
 import morgan from "morgan";
 import passport from "passport";
 
-import { googleStrategy, jwtStrategy } from "./auth.config"; //파일명을 auth.config.ts로 변경하고 타입을 명시하면 가장 깔끔하게 해결됩니다.
+import { googleStrategy, jwtStrategy } from "./auth.config.js";
+//파일명을 auth.config.ts로 변경하고 타입을 명시하면 가장 깔끔하게 해결됩니다.
 import { prisma } from "./db.config.js";
+import { Response } from "express";
 
 import swaggerAutogen from "swagger-autogen";
 import swaggerUiExpress from "swagger-ui-express";
@@ -130,9 +132,9 @@ app.get(
 const isLogin = passport.authenticate("jwt", { session: false });
 
 app.get("/mypage", isLogin, (req, res) => {
-  res.status(200).success({
-    message: `인증 성공! ${req.user.name}님의 마이페이지입니다.`,
-    user: req.user,
+  (res as any).status(200).success({
+    message: `인증 성공! ${(req as any).user.name}님의 마이페이지입니다.`,
+    user: req.user, //오류나서 res, req 둘다 any로 받아버림
   });
 });
 app.post("/api/v1/users/signup", handleUserSignUp);
@@ -171,7 +173,6 @@ app.listen(port, () => {
 });
 
 // Express Response 타입을 확장하여 커스텀 메서드(res.success, res.error) 타입 에러를 해결합니다.
-import { Response } from "express";
 
 declare global {
   namespace Express {
