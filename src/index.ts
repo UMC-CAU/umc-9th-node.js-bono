@@ -148,10 +148,10 @@ app.patch(
 );
 
 app.get("/api/v1/stores/:storeId/reviews", handleListStoreReviews);
-app.get("/api/v1/users/:userId/reviews", (req, res, next) => {});
+app.get("/api/v1/users/:userId/reviews", handleListMyReviews);
 
 app.get("/api/v1/stores/:storeId/missions", handleListStoreMissions);
-app.get("/api/v1/users/:userId/missions", (req, res, next) => {});
+app.get("/api/v1/users/:userId/missions", handleListMyMissionsInProgress);
 
 /**
  * 전역 오류를 처리하기 위한 미들웨어 -> 맨 뒤에 있어야 함.
