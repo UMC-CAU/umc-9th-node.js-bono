@@ -171,7 +171,7 @@ export const handleListMyReviews = async (req: any, res: any, next: any) => {
   /* 
   
 #swagger.summary = '나의 리뷰 목록 조회 API';
-
+#swagger.security = [{ "bearerAuth": [] }]
 #swagger.responses[200]={
     description: "나의 리뷰 목록 조회 성공 응답",
     content:{
@@ -245,7 +245,7 @@ export const handleListMyReviews = async (req: any, res: any, next: any) => {
 
   console.log("나의 리뷰 목록 조회를 요청했습니다!");
   const reviews = await listMyReviews(
-    parseInt(req.params.userId),
+    parseInt(req.user.id),
     typeof req.query.cursor === "string" ? parseInt(req.query.cursor) : 0
   );
   res.status(StatusCodes.OK).success(reviews);

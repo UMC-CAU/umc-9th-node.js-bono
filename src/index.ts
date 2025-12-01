@@ -94,6 +94,17 @@ app.get("/openapi.json", async (req, res, next) => {
       description: "UMC 9th Node.js 스웨거를 만들었어요.",
     },
     host: "localhost:3000",
+    schemes: ["http"],
+    components: {
+      securitySchemes: {
+        bearerAuth: {
+          type: "http",
+          scheme: "bearer",
+          bearerFormat: "JWT",
+        },
+      },
+    },
+    security: [{ bearerAuth: [] }],
   };
 
   const result = await swaggerAutogen(options)(outputFile, routes, doc);
@@ -154,7 +165,7 @@ app.patch(
 );
 
 app.get("/api/v1/stores/:storeId/reviews", handleListStoreReviews); //이건 로그인 안 해도 가능
-app.get("/api/v1/users/:userId/reviews", isLogin, handleListMyReviews);
+app.get("/api/v1/users/reviews", isLogin, handleListMyReviews);
 
 app.get("/api/v1/stores/:storeId/missions", handleListStoreMissions); //로그인 안 해도 가능
 app.get(
