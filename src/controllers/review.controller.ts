@@ -73,10 +73,14 @@ export const handleReviewSignUp = async (req: any, res: any, next: any) => {
       }
     };
   */
+  const bodywithUserId = {
+    ...req.body,
+    user_id: req.user.id, // 로그인한 유저의 id로 덮어쓰기
+  };
   console.log("리뷰 추가를 요청했습니다!");
-  console.log("body:", req.body);
+  console.log("body:", bodywithUserId);
 
-  const review = await reviewSignUp(bodyToReview(req.body));
+  const review = await reviewSignUp(bodyToReview(bodywithUserId));
   res.status(StatusCodes.OK).success(review);
 };
 

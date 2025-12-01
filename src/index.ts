@@ -129,6 +129,7 @@ app.get(
     });
   }
 );
+
 const isLogin = passport.authenticate("jwt", { session: false });
 
 app.get("/mypage", isLogin, (req, res) => {
@@ -139,7 +140,8 @@ app.get("/mypage", isLogin, (req, res) => {
 });
 app.post("/api/v1/users/signup", handleUserSignUp);
 app.post("/api/v1/store/signup", handleStoreSignUp);
-app.post("/api/v1/review/signup", handleReviewSignUp);
+
+app.post("/api/v1/review/signup", isLogin, handleReviewSignUp);
 app.post("/api/v1/store/mission/signup", handleMissionSignUp);
 app.post("/api/v1/store/mission/inprogress", handleUserMissionUpdateInProgress);
 app.patch(
