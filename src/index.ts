@@ -141,19 +141,27 @@ app.get("/mypage", isLogin, (req, res) => {
 app.post("/api/v1/users/signup", handleUserSignUp);
 app.post("/api/v1/store/signup", handleStoreSignUp);
 
-app.post("/api/v1/review/signup", isLogin, handleReviewSignUp);
-app.post("/api/v1/store/mission/signup", handleMissionSignUp);
-app.post("/api/v1/store/mission/inprogress", handleUserMissionUpdateInProgress);
+app.post("/api/v1/review/signup", isLogin, handleReviewSignUp); //이렇게만 해도 로그인 시에만 접근 가능하게 된다
+app.post("/api/v1/store/mission/signup", handleMissionSignUp); //이건 가게 주인이 하는 거
+app.post(
+  "/api/v1/store/mission/inprogress",
+  isLogin,
+  handleUserMissionUpdateInProgress
+);
 app.patch(
   "/api/v1/users/mission/:user_mission_id/completed", //아이디를 바디로 넣는 게 낫나 params로 넣는 게 낫나?? 일단은 params로..
-  handleUserMissionUpdateCompleted
+  handleUserMissionUpdateCompleted //이건 관리자만 가능
 );
 
-app.get("/api/v1/stores/:storeId/reviews", handleListStoreReviews);
-app.get("/api/v1/users/:userId/reviews", handleListMyReviews);
+app.get("/api/v1/stores/:storeId/reviews", handleListStoreReviews); //이건 로그인 안 해도 가능
+app.get("/api/v1/users/:userId/reviews", isLogin, handleListMyReviews);
 
-app.get("/api/v1/stores/:storeId/missions", handleListStoreMissions);
-app.get("/api/v1/users/:userId/missions", handleListMyMissionsInProgress);
+app.get("/api/v1/stores/:storeId/missions", handleListStoreMissions); //로그인 안 해도 가능
+app.get(
+  "/api/v1/users/:userId/missions",
+  isLogin,
+  handleListMyMissionsInProgress
+);
 
 /**
  * 전역 오류를 처리하기 위한 미들웨어 -> 맨 뒤에 있어야 함.

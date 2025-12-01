@@ -242,6 +242,7 @@ export const handleListMyReviews = async (req: any, res: any, next: any) => {
       }
     };
 */
+
   console.log("나의 리뷰 목록 조회를 요청했습니다!");
   const reviews = await listMyReviews(
     parseInt(req.params.userId),

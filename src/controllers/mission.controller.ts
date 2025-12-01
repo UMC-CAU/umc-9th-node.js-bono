@@ -87,6 +87,7 @@ export const handleUserMissionUpdateInProgress = async (
   next: any
 ) => {
   /*
+  
     #swagger.summary = '미션 진행중으로 변경 (유저미션 추가) API';
     #swagger.requestBody = {
       required: true,
@@ -148,10 +149,15 @@ export const handleUserMissionUpdateInProgress = async (
       }
     };
   */
-  console.log("미션 진행 요청을 받았습니다!");
-  console.log("body:", req.body);
 
-  const mission = await missionInProgress(bodyToUserMission(req.body));
+  const bodywithUserId = {
+    ...req.body,
+    user_id: req.user.id, // 로그인한 유저의 id로 덮어쓰기
+  };
+  console.log("미션 진행 요청을 받았습니다!");
+  console.log("body:", bodywithUserId);
+
+  const mission = await missionInProgress(bodyToUserMission(bodywithUserId));
   res.status(StatusCodes.OK).success(mission);
 };
 export const handleUserMissionUpdateCompleted = async (
