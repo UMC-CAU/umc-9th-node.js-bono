@@ -169,7 +169,7 @@ app.get("/api/v1/users/reviews", isLogin, handleListMyReviews);
 
 app.get("/api/v1/stores/:storeId/missions", handleListStoreMissions); //로그인 안 해도 가능
 app.get(
-  "/api/v1/users/:userId/missions",
+  "/api/v1/users/missionsInProgress",
   isLogin,
   handleListMyMissionsInProgress
 );

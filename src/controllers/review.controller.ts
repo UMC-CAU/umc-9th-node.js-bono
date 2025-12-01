@@ -9,6 +9,7 @@ import {
 export const handleReviewSignUp = async (req: any, res: any, next: any) => {
   /* 
     #swagger.summary = '리뷰 추가 API';
+    #swagger.security = [{ "bearerAuth": [] }]
     #swagger.requestBody = {
       required: true,
       content: {

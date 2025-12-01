@@ -89,6 +89,7 @@ export const handleUserMissionUpdateInProgress = async (
   /*
   
     #swagger.summary = '미션 진행중으로 변경 (유저미션 추가) API';
+    #swagger.security = [{ "bearerAuth": [] }]
     #swagger.requestBody = {
       required: true,
       content: {
@@ -96,10 +97,9 @@ export const handleUserMissionUpdateInProgress = async (
           schema: {
             type: 'object',
             properties: {
-              user_id : { type: 'number', example: 1 },
               mission_id : { type: 'number', example: 1 },
             },
-            required: [ 'user_id','mission_id']
+            required: ['mission_id']
           }
         }
       }
@@ -312,7 +312,7 @@ export const handleListMyMissionsInProgress = async (
   /* 
   
 #swagger.summary = '나의 진행중인 미션 목록 조회 API';
-
+#swagger.security = [{ "bearerAuth": [] }]
 #swagger.responses[200]={
     description: "나의 진행중인 미션 목록 조회 성공 응답",
     content:{
@@ -389,7 +389,7 @@ export const handleListMyMissionsInProgress = async (
   console.log("params:", req.params);
   console.log("query:", req.query);
   const missions = await listMyMissionsInProgress(
-    parseInt(req.params.userId),
+    parseInt(req.user.id),
     typeof req.query.cursor === "string" ? parseInt(req.query.cursor) : 0
   );
   res.status(StatusCodes.OK).success(missions);
