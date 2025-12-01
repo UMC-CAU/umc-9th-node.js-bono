@@ -7,6 +7,7 @@ import {
   getUser,
   getUserPreferencesByUserId,
   setPreference,
+  updateUser,
 } from "../repositories/user.repository.js";
 import { DuplicateUserEmailError } from "../errors.js";
 
@@ -44,6 +45,30 @@ export const userSignUp = async (data: UserSignUpData) => {
   }
 
   const preferences = await getUserPreferencesByUserId(joinUserId);
+
+  return responseFromUser({ user, preferences });
+};
+
+export const updateUserProfile = async (userId: number, data: any) => {
+  // data에는 수정할 필드들이 들어있음.
+  // 예: { name: "새 이름", address: "새 주소" }
+
+  // 비밀번호가 포함되어 있다면 해싱 처리
+  if (data.password) {
+    data.password = await bcrypt.hash(data.password, 10);
+  }
+
+  const updated = await updateUser(userId, data);
+  if (!updated) {
+    throw new Error("사용자 프로필 업데이트에 실패했습니다.");
+  }
+
+  const user = await getUser(userId);
+  if (user === null) {
+    throw new Error("업데이트 후 사용자 조회에 실패했습니다.");
+  }
+
+  const preferences = await getUserPreferencesByUserId(userId);
 
   return responseFromUser({ user, preferences });
 };

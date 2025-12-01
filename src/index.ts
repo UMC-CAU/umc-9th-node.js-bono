@@ -12,7 +12,10 @@ import { Response } from "express";
 import swaggerAutogen from "swagger-autogen";
 import swaggerUiExpress from "swagger-ui-express";
 
-import { handleUserSignUp } from "./controllers/user.controller.js";
+import {
+  handleUserSignUp,
+  handleProfileEdit,
+} from "./controllers/user.controller.js";
 import { handleStoreSignUp } from "./controllers/store.controller.js";
 import {
   handleReviewSignUp,
@@ -149,6 +152,9 @@ app.get("/mypage", isLogin, (req, res) => {
     user: req.user, //오류나서 res, req 둘다 any로 받아버림
   });
 });
+
+app.patch("/api/v1/user/profileEdit", isLogin, handleProfileEdit);
+
 app.post("/api/v1/users/signup", handleUserSignUp);
 app.post("/api/v1/store/signup", handleStoreSignUp);
 
