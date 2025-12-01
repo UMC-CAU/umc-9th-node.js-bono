@@ -2,12 +2,20 @@ import dotenv from "dotenv";
 import express from "express";
 import cors from "cors";
 import morgan from "morgan";
-import cookieParser from "cookie-parser";
+import passport from "passport";
+
+import { googleStrategy, jwtStrategy } from "./auth.config.js";
+//파일명을 auth.config.ts로 변경하고 타입을 명시하면 가장 깔끔하게 해결됩니다.
+import { prisma } from "./db.config.js";
+import { Response } from "express";
 
 import swaggerAutogen from "swagger-autogen";
 import swaggerUiExpress from "swagger-ui-express";
 
-import { handleUserSignUp } from "./controllers/user.controller.js";
+import {
+  handleUserSignUp,
+  handleProfileEdit,
+} from "./controllers/user.controller.js";
 import { handleStoreSignUp } from "./controllers/store.controller.js";
 import {
   handleReviewSignUp,
@@ -25,15 +33,18 @@ import { LoginError } from "./errors.js";
 
 dotenv.config();
 
+passport.use(googleStrategy);
+passport.use(jwtStrategy);
+
 const app = express();
 const port = process.env.PORT;
 
 app.use(morgan("dev")); // morgan 적용! 로그 포맷: dev
-app.use(cookieParser()); // cookieParser 적용!
 app.use(cors()); // cors 방식 허용
 app.use(express.static("public")); // 정적 파일 접근
 app.use(express.json()); // request의 본문을 json으로 해석할 수 있도록 함 (JSON 형태의 요청 body를 파싱하기 위함)
 app.use(express.urlencoded({ extended: false })); // 단순 객체 문자열 형태로 본문 데이터 해석
+app.use(passport.initialize());
 
 app.use(
   "/docs",
@@ -86,6 +97,17 @@ app.get("/openapi.json", async (req, res, next) => {
       description: "UMC 9th Node.js 스웨거를 만들었어요.",
     },
     host: "localhost:3000",
+    schemes: ["http"],
+    components: {
+      securitySchemes: {
+        bearerAuth: {
+          type: "http",
+          scheme: "bearer",
+          bearerFormat: "JWT",
+        },
+      },
+    },
+    security: [{ bearerAuth: [] }],
   };
 
   const result = await swaggerAutogen(options)(outputFile, routes, doc);
@@ -96,70 +118,67 @@ app.get("/", (req, res) => {
   res.send("Hello World!");
 });
 
-// 쿠키 만드는 라우터 (로그인)
-app.get("/api/v1/setcookie", (req, res) => {
-  // 'myCookie'라는 이름으로 'hello' 값을 가진 쿠키를 생성
-  res.cookie("myCookie", "hello", { maxAge: 60000 }); // 60초간 유효
-  res.send("쿠키가 생성되었습니다!");
-});
+app.get(
+  "/oauth2/login/google", //접속하면 자동으로 Google 로그인 주소로 이동하여 사용자가 Google 로그인을 할 수 있도록 해줍니다.
+  passport.authenticate("google", {
+    session: false,
+  })
+);
+app.get(
+  "/oauth2/callback/google", //Google 로그인이 성공하면 자동으로 되돌아오는 주소입니다. 여기에서는 쿼리 파라미터로 전달된 code 값을 이용해 Google API를 호출하여 사용자의 프로필 정보를 조회해 오게 됩니다.
+  passport.authenticate("google", {
+    session: false,
+    failureRedirect: "/login-failed",
+  }),
+  (req, res) => {
+    const tokens = req.user;
 
-// 쿠키 읽는 라우터 (마이페이지?)
-app.get("/api/v1/getcookie", (req, res) => {
-  // cookie-parser 덕분에 req.cookies 객체에서 바로 꺼내 쓸 수 있음
-  const myCookie = req.cookies.myCookie;
-
-  if (myCookie) {
-    console.log("쿠키가 있어요:", req.cookies); // { myCookie: 'hello' }
-    res.send(`당신의 쿠키: ${myCookie}`);
-  } else {
-    console.log("쿠키가 없습니다.");
-    res.send("쿠키가 없습니다.");
+    res.status(200).json({
+      resultType: "SUCCESS",
+      error: null,
+      success: {
+        message: "Google 로그인 성공!",
+        tokens: tokens, // { "accessToken": "...", "refreshToken": "..." }
+      },
+    });
   }
+);
+
+const isLogin = passport.authenticate("jwt", { session: false });
+
+app.get("/mypage", isLogin, (req, res) => {
+  (res as any).status(200).success({
+    message: `인증 성공! ${(req as any).user.name}님의 마이페이지입니다.`,
+    user: req.user, //오류나서 res, req 둘다 any로 받아버림
+  });
 });
 
-// 쿠키 삭제 (로그아웃)
-app.get("/api/v1/delcookie", (req, res) => {
-  res.clearCookie("username");
-  console.log("쿠키 삭제 완료");
-  res.send('로그아웃 완료 (쿠키 삭제). <a href="/">메인으로</a>');
-});
+app.patch("/api/v1/user/profileEdit", isLogin, handleProfileEdit);
 
 app.post("/api/v1/users/signup", handleUserSignUp);
 app.post("/api/v1/store/signup", handleStoreSignUp);
-app.post("/api/v1/review/signup", handleReviewSignUp);
-app.post("/api/v1/store/mission/signup", handleMissionSignUp);
-app.post("/api/v1/store/mission/inprogress", handleUserMissionUpdateInProgress);
+
+app.post("/api/v1/review/signup", isLogin, handleReviewSignUp); //이렇게만 해도 로그인 시에만 접근 가능하게 된다
+app.post("/api/v1/store/mission/signup", handleMissionSignUp); //이건 가게 주인이 하는 거
+app.post(
+  "/api/v1/store/mission/inprogress",
+  isLogin,
+  handleUserMissionUpdateInProgress
+);
 app.patch(
   "/api/v1/users/mission/:user_mission_id/completed", //아이디를 바디로 넣는 게 낫나 params로 넣는 게 낫나?? 일단은 params로..
-  handleUserMissionUpdateCompleted
+  handleUserMissionUpdateCompleted //이건 관리자만 가능
 );
 
-app.get("/api/v1/stores/:storeId/reviews", handleListStoreReviews);
-app.get("/api/v1/users/:userId/reviews", (req, res, next) => {
-  // 쿠키 검사되어야 실행!!
-  const myCookie = req.cookies.myCookie;
+app.get("/api/v1/stores/:storeId/reviews", handleListStoreReviews); //이건 로그인 안 해도 가능
+app.get("/api/v1/users/reviews", isLogin, handleListMyReviews);
 
-  if (myCookie) {
-    console.log("쿠키 확인됨:", req.cookies);
-    handleListMyReviews(req, res, next);
-  } else {
-    console.log("쿠키 없음");
-    throw new LoginError("로그인이 필요합니다.");
-  }
-});
-
-app.get("/api/v1/stores/:storeId/missions", handleListStoreMissions);
-app.get("/api/v1/users/:userId/missions", (req, res, next) => {
-  const myCookie = req.cookies.myCookie;
-
-  if (myCookie) {
-    console.log("쿠키 확인됨:", req.cookies);
-    handleListMyMissionsInProgress(req, res, next);
-  } else {
-    console.log("쿠키 없음");
-    throw new LoginError("로그인이 필요합니다.");
-  }
-});
+app.get("/api/v1/stores/:storeId/missions", handleListStoreMissions); //로그인 안 해도 가능
+app.get(
+  "/api/v1/users/missionsInProgress",
+  isLogin,
+  handleListMyMissionsInProgress
+);
 
 /**
  * 전역 오류를 처리하기 위한 미들웨어 -> 맨 뒤에 있어야 함.
@@ -181,7 +200,6 @@ app.listen(port, () => {
 });
 
 // Express Response 타입을 확장하여 커스텀 메서드(res.success, res.error) 타입 에러를 해결합니다.
-import { Response } from "express";
 
 declare global {
   namespace Express {

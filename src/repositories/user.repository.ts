@@ -90,3 +90,15 @@ export const getUserPreferencesByUserId = async (
       name: pref.foodCategory!.name, // ! 로 null이 아님을 단언 (위에서 이미 필터링함)
     }));
 };
+
+export const updateUser = async (
+  userId: number,
+  data: Partial<CreateUserData> //일부분만 바디로 들어올거임
+): Promise<boolean> => {
+  const result = await prisma.user.updateMany({
+    where: { id: userId },
+    data: data,
+  });
+
+  return result.count > 0; //업데이트된 행이 있으면 true 반환
+};

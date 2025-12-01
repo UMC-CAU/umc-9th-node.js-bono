@@ -9,6 +9,7 @@ import {
 export const handleReviewSignUp = async (req: any, res: any, next: any) => {
   /* 
     #swagger.summary = '리뷰 추가 API';
+    #swagger.security = [{ "bearerAuth": [] }]
     #swagger.requestBody = {
       required: true,
       content: {
@@ -73,10 +74,14 @@ export const handleReviewSignUp = async (req: any, res: any, next: any) => {
       }
     };
   */
+  const bodywithUserId = {
+    ...req.body,
+    user_id: req.user.id, // 로그인한 유저의 id로 덮어쓰기
+  };
   console.log("리뷰 추가를 요청했습니다!");
-  console.log("body:", req.body);
+  console.log("body:", bodywithUserId);
 
-  const review = await reviewSignUp(bodyToReview(req.body));
+  const review = await reviewSignUp(bodyToReview(bodywithUserId));
   res.status(StatusCodes.OK).success(review);
 };
 
@@ -167,7 +172,7 @@ export const handleListMyReviews = async (req: any, res: any, next: any) => {
   /* 
   
 #swagger.summary = '나의 리뷰 목록 조회 API';
-
+#swagger.security = [{ "bearerAuth": [] }]
 #swagger.responses[200]={
     description: "나의 리뷰 목록 조회 성공 응답",
     content:{
@@ -238,9 +243,10 @@ export const handleListMyReviews = async (req: any, res: any, next: any) => {
       }
     };
 */
+
   console.log("나의 리뷰 목록 조회를 요청했습니다!");
   const reviews = await listMyReviews(
-    parseInt(req.params.userId),
+    parseInt(req.user.id),
     typeof req.query.cursor === "string" ? parseInt(req.query.cursor) : 0
   );
   res.status(StatusCodes.OK).success(reviews);
