@@ -195,7 +195,7 @@ app.use((err: any, req: any, res: any, next: any) => {
     data: err.data || null,
   });
 });
-app.listen(port, () => {
+app.listen(port, "0.0.0.0", () => {
   console.log(`Example app listening on port ${port}`);
 });
 
