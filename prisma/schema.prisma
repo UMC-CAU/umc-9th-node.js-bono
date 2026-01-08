@@ -3,7 +3,7 @@ generator client {
 }
 
 datasource db {
-  provider = "mysql"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
@@ -43,8 +43,8 @@ model UserFavorCategory {
   user           User?         @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "user_favor_category_ibfk_1")
   foodCategory   FoodCategory? @relation(fields: [foodCategoryId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "user_favor_category_ibfk_2")
 
-  @@index([userId], map: "user_id")
-  @@index([foodCategoryId], map: "food_category_id")
+  @@index([userId], map: "user_favor_category_user_id_idx")
+  @@index([foodCategoryId], map: "user_favor_category_food_category_id_idx")
   @@map("user_favor_category")
 }
 
@@ -53,11 +53,11 @@ model mission {
   store_id     Int
   content      String        @db.Text
   reward       Int
-  duedate      DateTime      @db.DateTime(0)
+  duedate      DateTime
   store        store          @relation(fields: [store_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "mission_ibfk_1")
   user_mission user_mission[]
 
-  @@index([store_id], map: "store_id")
+  @@index([store_id], map: "mission_store_id_idx")
 }
 
 model region {
@@ -72,13 +72,13 @@ model review {
   user_id    Int
   store_id   Int
   content    String?   @db.Text
-  created_at DateTime? @default(now()) @db.DateTime(6)
+  created_at DateTime? @default(now())
   rate       Int
   user       User      @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "review_ibfk_1")
   store      store     @relation(fields: [store_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "review_ibfk_2")
 
-  @@index([store_id], map: "store_id")
-  @@index([user_id], map: "user_id")
+  @@index([store_id], map: "review_store_id_idx")
+  @@index([user_id], map: "review_user_id_idx")
 }
 
 model store {
@@ -97,12 +97,12 @@ model user_mission {
   mission_id Int
   user_id    Int
   status     user_mission_status?
-  updated_at DateTime?            @db.DateTime(0)
+  updated_at DateTime?
   mission    mission              @relation(fields: [mission_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "user_mission_ibfk_1")
   user       User                 @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "user_mission_ibfk_2")
 
   @@unique([mission_id, user_id], map: "uq_user_mission")
-  @@index([user_id], map: "user_id")
+  @@index([user_id], map: "user_mission_user_id_idx")
 }
 
 enum user_mission_status {
